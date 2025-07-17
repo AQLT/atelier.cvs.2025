@@ -1,0 +1,6 @@
+User-agent: *
+User-agent: AdsBot-Google
+# Enlever la ligne suivante :
+Disallow: /
+
+Sitemap: https://aqlt.github.io/formation.template/sitemap.xml

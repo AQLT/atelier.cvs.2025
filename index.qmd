@@ -1,0 +1,28 @@
+---
+title: "{{< var titre.pres >}}"
+date: 11/06/2023
+date-format: "MMM YYYY"
+---
+
+Supports de cours et exercices de la formation [Désaisonnaliser une série temporelle au CEPE](https://www.lecepe.fr/formations/methodes-statistiques/series-temporelles/desaisonnaliser-une-serie-temporelle_42.html) les 6, 7, 13, 14 novembre 2023.
+
+# {{< fa person-chalkboard >}} Cours
+
+1.  [Introduction à la désaisonnalisation](Cours/01_introduction.pdf)
+
+# {{< fa computer >}} Travaux pratiques
+
+## TP JDemetra+
+
+1.  [Première manipulation de JDemetra+](TP/JD_1_Premiere_manipulation_JD.qmd)
+
+
+## TP {{< fa brands r-project >}}
+
+0.  [Traitement des séries temporelles sous R](TP/JD_1_Premiere_manipulation_JD.qmd)
+
+# {{< fa book-atlas >}} Bibliographie
+
+# {{< fa copyright >}} Licence
+
+Ces supports de cours sont librement réutilisable sous © 2023 Alain Quartier-la-Tente, Insee [CC BY-NC-SA 3.0 <img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Licence Creative Commons" style="display: inline-block; margin: 0"/>](http://creativecommons.org/licenses/by-nc-sa/4.0/).

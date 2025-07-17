@@ -1,0 +1,70 @@
+project:
+  type: website
+  render:
+    - "*.qmd"
+    - "!Cours"
+  resources:
+    - "*/Cours/*.pdf"
+    - "robots.txt"
+
+website:
+  title: "{{< var titre.website >}}"
+  description: "{{< var description >}}"
+  # site-url : pour sitemap.xml
+  # Penser à également modifier le fichier robots.txt
+  site-url: "https://aqlt.github.io/formation.template"
+  favicon: img/favicon.ico
+  google-analytics:
+    tracking-id: "G-X652XRGDPL"
+    storage: none
+  navbar:
+    logo-alt: "AQLT"
+    right:
+      - text: "Ensemble formations"
+        href: https://aqlt.github.io/formations/
+      - icon: github
+        href: "http://github.com/AQLT/{{< var repo-github >}}"
+    left:
+      - icon: house
+        file: index.qmd
+
+  page-footer:
+    left: "Copyright 2023, Alain Quartier-la-Tente, Insee"
+    right:
+      - icon: github
+        href: http://github.com/AQLT
+      - icon: globe
+        href: https://aqlt.github.io/
+      - icon: linkedin
+        href: https://www.linkedin.com/in/alainqlt/
+
+format:
+  html:
+    theme: "Litera"
+    toc: true
+
+lang: fr
+language:
+ title-block-author-single: Auteur
+
+editor: source
+
+execute:
+  freeze: auto
+
+# giscus
+comments:
+  giscus:
+    repo: AQLT/formations
+    repo-id: "R_kgDOIepagw"
+    category: "Announcements"
+    category-id: "DIC_kwDOIepag84CSt5_"
+    mapping: "pathname"
+    language: fr
+    #strict: false
+    reactions-enabled: true
+    loading: lazy
+    #emit-metada: false
+    input-position: "bottom"
+    theme: "light"
+    #crossorigin: "anonymous"

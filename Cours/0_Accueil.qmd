@@ -1,0 +1,41 @@
+---
+title: "0 - Accueil des stagiaires"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+### Faire connaissance
+Un tour de table pour faire connaissance :
+
+Prénom, Nom  
+Service ou établissement d'origine  
+Fonction occupée   
+Expérience sur les CVS-CJO (méthodes, outils utilisés)  
+
+Pourquoi suivez-vous cette formation ?\
+Qu'attendez vous de cette formation ?\
+À quelles questions souhaitez-vous obtenir une réponse ?
+
+
+### Objectifs de la formation
+
+Ensemble des documents disponibles sous : https://aqlt.github.io/{{< var repo-github >}}
+
+- connaître les concepts de base et le principe de la méthode X13-ARIMA
+
+- savoir utiliser R et JDemetra+ pour désaisonnaliser des séries
+
+- connaître les méthodes de correction des effets de calendrier
+
+- savoir manipuler les fonctions de base de JDemetra+ et lire les principaux diagnostics
+
+- savoir modifier les spécifications et interpréter les diagnostics détaillés pour améliorer et valider les modèles
+
+- connaître les 3 étapes du processus de la production des CVS-CJO
+
+
+. . .
+
+À approfondir : modèles espace-état, désaisonnalisation haute fréquence, benchmarking et désagrégation temporelle

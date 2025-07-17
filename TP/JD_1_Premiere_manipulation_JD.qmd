@@ -1,0 +1,8 @@
+---
+title: "1 - Première manipulation de JDemetra+"
+---
+
+
+> L'objectif de ce TP est de faire une première manipulation de JDemetra+ : créer un workspace, importer des données, lancer une première désaisonnalisation.
+
+# Créer et sauvegarder un Workspace

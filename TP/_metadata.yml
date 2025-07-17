@@ -1,0 +1,6 @@
+subtitle: "{{< var titre.pres >}}"
+author: "{{< var auteur >}}"
+logo: "img/logo.png"
+format:
+  html:
+    number-sections: true
