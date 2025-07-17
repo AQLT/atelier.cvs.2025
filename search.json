@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Template formation",
+    "section": "",
+    "text": "Supports de cours et exercices de la formation Désaisonnaliser une série temporelle au CEPE les 6, 7, 13, 14 novembre 2023."
+  },
+  {
+    "objectID": "index.html#tp-jdemetra",
+    "href": "index.html#tp-jdemetra",
+    "title": "Template formation",
+    "section": "TP JDemetra+",
+    "text": "TP JDemetra+\n\nPremière manipulation de JDemetra+"
+  },
+  {
+    "objectID": "index.html#tp-fa-brands-r-project",
+    "href": "index.html#tp-fa-brands-r-project",
+    "title": "Template formation",
+    "section": "TP ",
+    "text": "TP \n\nTraitement des séries temporelles sous R"
+  },
+  {
+    "objectID": "TP/JD_1_Premiere_manipulation_JD.html",
+    "href": "TP/JD_1_Premiere_manipulation_JD.html",
+    "title": "1 - Première manipulation de JDemetra+",
+    "section": "",
+    "text": "L’objectif de ce TP est de faire une première manipulation de JDemetra+ : créer un workspace, importer des données, lancer une première désaisonnalisation.\n\n\n1 Créer et sauvegarder un Workspace"
+  }
+]

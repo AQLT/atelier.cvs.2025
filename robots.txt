@@ -1,0 +1,1 @@
+Sitemap: https://github.com/AQLT/formation.template/sitemap.xml
