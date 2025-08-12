@@ -1,28 +1,118 @@
 ---
 title: "{{< var titre.pres >}}"
-date: 11/06/2023
+date: 08/18/2025
 date-format: "MMM YYYY"
 ---
 
-Supports de cours et exercices de la formation [Désaisonnaliser une série temporelle au CEPE](https://www.lecepe.fr/formations/methodes-statistiques/series-temporelles/desaisonnaliser-une-serie-temporelle_42.html) les 6, 7, 13, 14 novembre 2023.
+Supports de cours et exercices du séminaire régional sur la correction des variations saisonnières avec R et JDemetra+ du 18 au 22 août 2025.
+
+# {{< fa plug-circle-check >}} Installation du logiciel
+
+Vous pouvez retrouver [ici](manuel_installation.qmd) le manuel d'installation de JDemetra+, RJDemetra et le JWSACruncher avec une version portable de Java {{< fa brands java >}}.
 
 # {{< fa person-chalkboard >}} Cours
 
 1.  [Introduction à la désaisonnalisation](Cours/01_introduction.pdf)
 
+2.  [Introduction R](Cours/02a_Intro_R.pdf) et  [R et JDemetra+](Cours/02b_R_et_JD.pdf)
+
+3.  [Exploration des séries et décomposition](Cours/03_Exploration_series.pdf)
+
+4.  [Methode X13-ARIMA](Cours/04_Methode_X13-ARIMA.pdf)
+
+5.  [La correction des effets de calendrier](Cours/05_CJO.pdf)
+
+6.  [(Complément) Le modèle Reg-ARIMA](Cours/06_Le_modele_Reg-ARIMA.pdf)
+
+7.  [(Complément) Problèmes d'estimation du modèle Reg-ARIMA](Cours/07_Pb_estimation_regarima.pdf)
+
+8.  [(Complément) Les Moyennes Mobiles](Cours/08_Les_Moyennes_Mobiles.pdf)
+
+9. [Les trois temps de la production](Cours/09_temps_production.pdf)
+
 # {{< fa computer >}} Travaux pratiques
-
-## TP JDemetra+
-
-1.  [Première manipulation de JDemetra+](TP/JD_1_Premiere_manipulation_JD.qmd)
 
 
 ## TP {{< fa brands r-project >}}
 
-0.  [Traitement des séries temporelles sous R](TP/JD_1_Premiere_manipulation_JD.qmd)
+0.  [(Complément) Traitement des séries temporelles sous {{< fa brands r-project >}}](TP/R_0_Manipulation_series_temporelles.qmd)
 
-# {{< fa book-atlas >}} Bibliographie
+1.  [R et JDemetra+](TP/R_1_R_et_JD.qmd)
 
+2.  [Correction des jours ouvrables](TP/R_2_CJO.qmd)
+
+3.  [(Complément) Preajustement](TP/R_3_Preadjustment.qmd)
+
+4.  [(Complément) Décomposition (X11)](TP/R_4_X11.qmd)
+
+5.  [JDemetra+ en production](TP/R_5_JD_in_production.qmd) et programmes [1-cruncher.R](R-macronia/1-cruncher.R) et [2-tableau de bord.R](R-macronia/2-tableau de bord.R)
+
+6. Autres programmes : [3-imae-calage](R-macronia/3-imae-calage.R) et [4-cvs-indirecte](R-macronia/4-cvs-indirecte.R)
+
+
+
+
+## TP JDemetra+ (Complément) 
+
+1.  [Première manipulation de JDemetra+](TP/JD_1_Premiere_manipulation_JD.qmd)
+
+2.  [Analyse exploratoire](TP/JD_2_Analyse_exploratoire.qmd)
+
+3.  [Désaisonnalisation sans correction des jours ouvrables](TP/JD_3_CVS_sans_CJO.qmd)
+
+4.  [Désaisonnalisation avec correction des jours ouvrables](TP/JD_4_CVS_CJO.qmd)
+
+5.  [Pré-ajustement](TP/JD_5_Preajustment.qmd)
+
+6.  [Décomposition (X11)](TP/JD_6_X11.qmd)
+
+# {{< fa file-zipper >}} Fichiers externes
+
+Fichiers externes associés à ce cours :
+
+```{r}
+#| echo: false
+#| results: asis
+#| eval: false
+all_f_d <- list.files(path = "data")
+cat(sprintf("- [%s](data/%s)", all_f_d, all_f_d),
+	sep = "\n")
+all_f_pdf <- list.files(path = "PDF")
+cat(sprintf("- [%s](PDF/%s)", all_f_pdf, all_f_pdf),
+	sep = "\n")
+```
+
+- Workspace et données associées à la Macronie\ : [macronia.zip](data/macronia.zip)
+- Jeu de régresseur JO (pour la V2, voir [TP2 - Correction des jours ouvrables](TP/R_2_CJO.qmd))\ :  [regcjo.xlsx](data/regcjo.xlsx)
+- Description des M-statistiques\ : [Description_statsM.pdf](PDF/Description_statsM.pdf)
+- Description des objets exportables depuis JDemetra+ (V2) : [output_jd.pdf](PDF/output_jd.pdf)
+- Spécifications pré-définies\ : [Predefined_specifications.pdf](PDF/Predefined_specifications.pdf)
+- Méthodes de rafraîchissement\ : [refresh_policies.pdf](PDF/refresh_policies.pdf)
+
+
+# {{< fa book-atlas >}}  Bibliographie
+
+- Handbook (rassemble de nombreux articles sur la désaisonnalisation)\ : <https://ec.europa.eu/eurostat/web/products-manuals-and-guidelines/-/ks-gq-18-001>
+
+- Guidelines (recommandations sur la désaisonnalisation)\ : <https://ec.europa.eu/eurostat/web/products-manuals-and-guidelines/w/ks-gq-24-012>
+
+-  Ladiray D., et Quenneville B. (1999). Comprendre la méthode X11, *Institut National de la Statistique et des Études Économiques*, <https://www.census.gov/pub/ts/papers/x11doc.pdf>
+
+- Documents de vulgarisation (pour communiquer avec utilisateurs) :
+
+	- <https://www.census.gov/data/software/x13as.References.html#par_list_1322540616>
+	- Données désaisonnalisées — Foire aux questions, Statistique Canada. <https://www150.statcan.gc.ca/n1/dai-quo/btd-add/btd-add-fra.htm>
+
+
+- Autour de JDemetra+ :
+
+	- Manuel de référence (qui ne sera plus actualisé) : <https://cros-legacy.ec.europa.eu/system/files/jdemetra_reference_manual_version_2.1_0.pdf> et <https://cros-legacy.ec.europa.eu/system/files/jdemetra_reference_manual_version_2.2_0.docx> 
+
+	- Manuel utilisateurs : <https://cros-legacy.ec.europa.eu/content/jdemetra-user-guide-version-22_en>
+
+	- Documentation de JDemetra+ <https://jdemetradocumentation.github.io/JDemetra-documentation/> et nouvelle version <https://jdemetra-new-documentation.netlify.app>
+	
 # {{< fa copyright >}} Licence
 
-Ces supports de cours sont librement réutilisable sous © 2023 Alain Quartier-la-Tente, Insee [CC BY-NC-SA 3.0 <img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Licence Creative Commons" style="display: inline-block; margin: 0"/>](http://creativecommons.org/licenses/by-nc-sa/4.0/).
+Ces supports de cours sont librement réutilisable sous © 2025 Alain Quartier-la-Tente, FMI [CC BY-NC-SA 4.0 <img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Licence Creative Commons" style="display: inline-block; margin: 0"/>](http://creativecommons.org/licenses/by-nc-sa/4.0/).
+
