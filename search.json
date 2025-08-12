@@ -438,7 +438,7 @@
     "href": "index.html#tp",
     "title": "Désaisonnaliser une série temporelle",
     "section": "TP ",
-    "text": "TP \n\n(Complément) Traitement des séries temporelles sous \nR et JDemetra+\nCorrection des jours ouvrables\n(Complément) Preajustement\n(Complément) Décomposition (X11)\nJDemetra+ en production et programmes 1-cruncher.R et 2-tableau de bord.R\nAutres programmes : 3-imae-calage et 4-cvs-indirecte"
+    "text": "TP \n\n(Complément) Traitement des séries temporelles sous \nR et JDemetra+\nCorrection des jours ouvrables\n(Complément) Preajustement\n(Complément) Décomposition (X11)\nJDemetra+ en production et programmes 1-cruncher.R et 2-tableau de bord.R\nAutres programmes : 3-imae-calage.R et 4-cvs-indirecte.R"
   },
   {
     "objectID": "index.html#tp-jdemetra-complément",
