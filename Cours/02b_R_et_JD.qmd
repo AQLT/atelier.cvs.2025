@@ -1,0 +1,409 @@
+---
+title: "2 - R et JDemetra+"
+---
+
+```{r setup, include=FALSE}
+options(xtable.comment = FALSE)
+library(ggplot2)
+library(reshape2)
+library(RJDemetra)
+options(enable_print_style = FALSE)
+knitr::opts_chunk$set(echo = TRUE, fig.pos = 'H',message=FALSE,warning = FALSE)
+```
+
+
+
+
+# Lancer JDemetra+ depuis R
+### RJDemetra ![](img/rjdemetra_logo.png){height=1.5cm}
+
+RJDemetra est un package qui permet de lancer les routines de JDemetra depuis R
+
+{{< fa brands github >}} : https://github.com/rjdverse/rjdemetra
+
+Page web : https://rjdverse.github.io/rjdemetra/
+
+Pour l'installer :
+
+
+```{r gh-installation, echo = TRUE, eval = FALSE}
+install.packages("RJDemetra")
+```
+
+
+{{< fa arrow-circle-right >}} Peut être utilisé pour développer de nouveaux outils pour aider la production
+
+{{< fa arrow-circle-right >}} Il faut Java 8 -> voir [manuel d'installation](https://AQLT.github.io/{{< var repo-github >}}/manuel_installation.html)
+
+## Current status
+
+### Current status
+
+- RegARIMA, TRAMO-SEATS et X-13-ARIMA :  
++ spécifications prédéfinies et personnalisées 
++ classes S3 avec des méthodes plot, summary, print
+
+\medskip
+
+- Manipulation de workspaces JD+ :  
++ Import de workspaces to avec le modèle CVS
++ Export des modèles R créé par RJDemetra
+
+\medskip
+
+- Contient une base de données : les IPI dans l'industrie manufacturière dans l'UE
+
+
+## RegARIMA : exemples
+
+### RegARIMA : exemples (1/4)
+
+```{r}
+library(RJDemetra)
+ipi_fr <- ipi_c_eu[,"FR"]
+regarima_model <- regarima_x13(ipi_fr, spec = "RG4c")
+regarima_model
+```
+
+### RegARIMA : exemples (2/4)
+\footnotesize
+
+```{r}
+summary(regarima_model)
+```
+
+### RegARIMA : exemples (3/4)
+
+```{r, echo = FALSE}
+def.par <- par(no.readonly = TRUE)
+par(mai = c(0,0.82,0,0.42))
+```
+
+```{r, fig.height = 6 }
+layout(matrix(1:6, 3, 2));plot(regarima_model, ask = FALSE)
+```
+
+### RegARIMA : exemples (4/4)
+
+```{r, echo = FALSE}
+def.par <- par(no.readonly = TRUE)
+par(mai = c(0,0.82,0,0.42))
+```
+
+```{r, fig.height = 6 }
+plot(regarima_model, which = 7)
+```
+
+## CVS-CJO : exemples
+### CVS-CJO : exemples (1/8)
+
+Un object `SA` est une `list()` de 5 éléments:
+
+![](img/sa_obj_struct.png)
+
+### CVS-CJO : exemples (2/8)
+
+Possibilité de définir ses propres spécifications comme sous JD+ ou d'utiliser les spécifications prédéfinies:
+
+\footnotesize
+```{r}
+x13_usr_spec <- x13_spec(spec = c("RSA5c"),
+                         usrdef.outliersEnabled = TRUE,
+                         usrdef.outliersType = c("LS", "AO"),
+                         usrdef.outliersDate = c("2008-10-01",
+                                                 "2002-01-01"),
+                         usrdef.outliersCoef = c(36, 14),
+                         transform.function = "None")
+x13_mod <- x13(ipi_fr, x13_usr_spec)
+ts_mod <- tramoseats(ipi_fr, spec = "RSAfull")
+```
+
+
+### CVS-CJO : exemples (3/8): decomposition
+
+
+```{r}
+x13_mod$decomposition
+```
+
+### CVS-CJO : exemples (4/8): decomposition
+
+
+```{r}
+ts_mod$decomposition
+```
+
+
+### CVS-CJO : exemples (5/8)
+
+```{r, fig.height=6}
+plot(x13_mod$decomposition)
+```
+
+### CVS-CJO : exemples (6/8)
+
+
+```{r}
+x13_mod$final
+```
+
+### CVS-CJO : exemples (7/8)
+
+```{r,fig.height=6}
+plot(x13_mod$final, first_date = 2012, type_chart = "sa-trend")
+```
+
+
+### CVS-CJO : exemples (8/8)
+
+```{r,fig.height=6}
+x13_mod$diagnostics
+```
+
+
+
+## Manipuler des workspaces
+
+
+### Exporter un workspace
+
+```{r, echo= TRUE, message = FALSE}
+jws <- new_workspace()
+new_multiprocessing(jws, name = "MP-1")
+add_sa_item(jws, multiprocessing = "MP-1",
+            sa_obj = x13_mod, name =  "SA with X13 model 1 ")
+add_sa_item(jws, multiprocessing =  "MP-1",
+            sa_obj = ts_mod, name = "SA with TramoSeats model 1")
+save_workspace(jws, "workspace.xml")
+```
+
+![](img/workspace.png)
+
+### Importer un workspace (1/3)
+
+\footnotesize
+
+```{r}
+jws <- load_workspace("workspace.xml")
+get_ts(jws)
+```
+
+### Importer un workspace (2/3)
+
+\animategraphics[loop, autoplay, width=\linewidth]{2.5}{img/gif/import_model/}{1}{114}
+
+\footnotesize
+Note : animation visible sur Adobe Reader uniquement
+
+
+
+### Importer un workspace (3/3)
+\footnotesize
+
+```{r}
+compute(jws) # Important to get the Sa model
+models <- get_model(jws) # A progress bar is printed by default
+# To extract only one model
+jmp <- get_object(jws, 1)
+count(jmp)
+jsa2 <- get_object(jmp, 2)
+get_name(jsa2)
+mod <- get_model(jws, jsa2)
+```
+
+
+
+# Réduction du temps de calcul
+
+## Manipulation des objets Java
+
+### Manipuler des objets {{< fa brands java >}} (1/2)
+
+\footnotesize
+Les fonctions peuvent être assez consommatrices en temps de calcul... surtout si l'on n'a besoin que d'un seul paramètre
+
+\medskip
+
+{{< fa arrow-circle-right >}} "Manipuler" modèles Java : `jx13`, `jtramoseats`, `jregarima`, `jregarima_x13`, `jregarima_tramoseats` et `get_jmodel`
+
+\medskip
+
+```{r}
+jx13_mod <- jx13(ipi_fr, x13_usr_spec)
+# To get the available outputs:
+tail(get_dictionary(jx13_mod))
+```
+
+
+### Manipuler des objets {{< fa brands java >}}(2/2)
+
+\footnotesize
+```{r}
+# To get an indicator:
+get_indicators(jx13_mod, "diagnostics.td-res-all", "diagnostics.ic-ratio")
+# To get the previous R output
+x13_mod <- jSA2R(jx13_mod)
+```
+
+{{< fa arrow-circle-right >}} L'output peut être personnalisé 
+
+\medskip
+
+{{< fa exclamation-triangle >}} Pas d'erreur renvoyé par `jx13()` avec une "mauvaise" SA (preliminary check...) and `get_indicators()` renvoie objet `NULL`
+
+
+## Benchmarking
+
+### Bencharking with X-13 on French IPI
+
+\footnotesize
+`r R.version["version.string"]`, `r R.version["platform"]`, Windows 7 x64 (build 7601) Service Pack 1
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE, fig.height = 6}
+library(microbenchmark)
+library(ggplot2)
+autoplot(readRDS("img/microbenchmark.RDS")) + theme(text = element_text(size=20))
+```
+
+
+# Utilisation de RJDemetra pour améliorer la production
+
+## Autour de RJDemetra
+
+### Exemples d'utilisation de RJDemetra
+
+- rjdqa : package pour aider à évaluer la qualité de la désaisonnalisation (tableau de bord)
+
+{{< fa brands github >}}{} https://github.com/AQLT/rjdqa
+
+- ggdemetra : intégrer la désaisonnalisation à ggplot2
+
+{{< fa brands github >}}{} https://github.com/AQLT/ggdemetra
+
+- rjdmarkdown : faciliter les rapports automatiques avec rmarkdown
+
+{{< fa brands github >}}{} https://github.com/AQLT/rjdmarkdown
+
+- rjdworkspace : manipuler les workspaces
+
+{{< fa brands github >}}{} https://github.com/InseeFrLab/rjdworkspace
+
+
+# Lancement du JWSACruncher depuis R
+
+### Le JWSACruncher
+
+
+Objectifs du JWSACruncher : mettre à jour un workspace de JDemetra+ et exporter les résultats à partir de la console (en *batch*), sans devoir ouvrir JDemetra+ : très utile pour la production. Quelques liens :
+
+- pour télécharger le JWSACruncher <https://github.com/jdemetra/jwsacruncher/releases>.
+
+- l'aide associée au JWSACruncher <https://github.com/jdemetra/jwsacruncher/wiki>.
+
+
+### Le JWSACruncher
+
+Pour lancer le JWSACruncher de JDemetra+ il faut :
+
+- le JWSACruncher\ ;
+
+- un fichier contenant les paramètres sur la méthode de rafraîchissement à utilisée pour mettre à jour le workspace et sur les paramètres d'export\ ;  
+
+- un workspace valide de JDemetra+.
+
+Sur le CRAN il y a le package `rjwsacruncher` (https://github.com/AQLT/rjwsacruncher) qui facilite son utilisation !
+
+### Utilisation de rjwsacruncher (2/3)
+
+Trois options vont être utiles : `default_matrix_item` (diagnostics à exporter), `default_tsmatrix_series` (séries temporelles à exporter) et `cruncher_bin_directory` (chemin vers le cruncher).
+
+Pour afficher les valeurs :
+
+```{r, eval = FALSE}
+getOption("default_matrix_item")
+getOption("default_tsmatrix_series")
+getOption("cruncher_bin_directory")
+```
+
+Utiliser la fonction `options()` pour les modifier. Par exemple :
+
+```{r, eval = FALSE}
+options(default_matrix_item = c("likelihood.aic",
+                                "likelihood.aicc",
+                                "likelihood.bic",
+                                "likelihood.bicc"))
+options(default_tsmatrix_series = c("sa", "sa_f"))
+options(cruncher_bin_directory =
+          "D:/jwsacruncher-2.2.0/jdemetra-cli-2.2.0/bin")
+```
+
+### Utilisation de JDCruncheR (3/3)
+
+Une fois les trois options précédentes validées le plus simple est d'utiliser la fonction `cruncher_and_param()` :
+
+```{r, eval = FALSE}
+cruncher_and_param() # lancement avec paramètres par défaut
+
+cruncher_and_param(workspace = "D:/workspace.xml",
+                   # Pour ne pas renommer les noms des dossiers exportés :
+                   rename_multi_documents = FALSE,
+                   policy = "lastoutliers")
+```
+
+Pour voir l'aide associée à une fonction, utiliser `help()` ou `?` : 
+
+```{r, eval = FALSE}
+?cruncher_and_param
+help(cruncher_and_param)
+```
+
+
+```{r, remove-workspace, include=FALSE}
+file.remove("workspace.xml")
+unlink("workspace", recursive=TRUE)
+```
+
+# R et JDemetra+ 3.0
+
+### R et JDemetra+ 3.0 {.allowframebreaks}
+
+La version 3 de JDemetra+ est accompagnée de nombreux packages R uniquement disponible sur [{{< fa brands github >}} github.com/rjdemetra](https://github.com/rjdemetra) :
+
+- [`rjd3toolkit`](https://github.com/rjdverse/rjd3toolkit) : boite à outils (créations de régresseurs, de calendriers, tests, etc.)
+
+- [`rjd3x13`](https://github.com/rjdverse/rjd3x13) et [`rjd3tramoseats`](https://github.com/rjdverse/rjd3tramoseats) : méthodes X-13 et TRAMO-SEATS.
+
+- [`rjd3workspace`](https://github.com/rjdverse/rjd3workspace) et [`rjd3providers`](https://github.com/rjdverse/rjd3providers) : manipulation de workspaces
+
+- [`rjd3x11plus`](https://github.com/rjdverse/rjd3x11plus), [`rjd3stl`](https://github.com/rjdverse/rjd3stl) et [`rjd3highfreq`](https://github.com/rjdverse/rjd3highfreq) : différentes méthodes pour la désaisonnalisation de séries hautes fréquences\
+Exemples : https://github.com/palatej/test_rjd3hf
+
+- [`rjd3filters`](https://github.com/rjdverse/rjd3filters) : manipulation de moyennes mobiles
+
+- [`rjd3sts`](https://github.com/rjdverse/rjd3sts) : interface simple autour des modèles espace-état et des *structural time series*\
+Exemples : https://github.com/palatej/test_rjd3sts
+
+- [`rjd3bench`](https://github.com/rjdverse/rjd3bench) : *Benchmarking* (uni et multivarié) et désagrégation temporelle\
+Exemples : https://github.com/palatej/test_rjd3bench
+
+- [`rjd3revisions`](https://github.com/rjdverse/rjd3revisions) : analyse des révisions
+
+- [`ggdemetra3`](https://github.com/AQLT/ggdemetra3) : version 3 de `ggdemetra`
+
+- [`rjd3report`](https://github.com/AQLT/rjd3report) : version 3 de `rjdqa` et `rjdmarkdown` (en cours de développement)
+
+
+### Bibliographie
+\footnotesize
+
+\begin{thebibliography}{999}
+\bibitem{RJDemetra} Alain Quartier-la-Tente, Anna Michalek, Jean Palate and Raf Baeyens (2021). \emph{RJDemetra: Interface to 'JDemetra+' Seasonal Adjustment Software}. \url{https://github.com/rjdverse/RJDemetra}
+\bibitem{rjdworkspace} Alain Quartier-la-Tente (2021). rjdworkspace: Manipulation of JDemetra+ Workspaces. \url{https://github. com/InseeFrLab/rjdworkspace}. 
+\bibitem{rjdqa} Alain Quartier-la-Tente. \emph{rjdqa: Quality Assessment for Seasonal Adjustment}.\url{https://github.com/AQLT/rjdqa}.
+\bibitem{rjdmarkdown} Alain Quartier-la-Tente (2020). \emph{rjdmarkdown: 'rmarkdown' Extension for Formatted 'RJDemetra' Outputs}. R package version 0.2.0. \url{https://github.com/AQLT/rjdmarkdown}.
+\bibitem{ggdemetra} Alain Quartier-la-Tente. \emph{ggdemetra: 'ggplot2' Extension for Seasonal and Trading Day Adjustment with 'RJDemetra'}. \url{https://github.com/AQLT/ggdemetra}.
+\bibitem{rjwsacruncher} Alain Quartier-la-Tente (2019). \emph{rjwsacruncher: Interface to the 'JWSACruncher' of 'JDemetra+'}. \url{https://github.com/AQLT/rjwsacruncher}
+\bibitem{docInsee} Anna Smyk, Alice Tchang (2021). \emph{R Tools for JDemetra+, Seasonal adjustment made easier}. Insee, Document de travail n° M2021/01. \url{https://www.insee.fr/fr/statistiques/5019786}.
+\end{thebibliography}
+
+

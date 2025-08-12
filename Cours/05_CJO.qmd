@@ -1,0 +1,823 @@
+---
+title: "5 - La correction des effets de calendrier"
+---
+
+```{r setup, include=FALSE}
+options(xtable.comment = FALSE)
+library(ggplot2)
+library(reshape2)
+library(knitr)
+library(kableExtra)
+library(rjd3toolkit)
+
+beamer_textwidth <- 11.13435
+beamer_textheight <- 7.89807
+conv_cm_to_in <- 0.393701
+conv_cm_to_px <- 75
+knitr::opts_chunk$set(echo = FALSE, fig.pos = 'H',message=FALSE,
+                      fig.height = beamer_textheight * conv_cm_to_in,
+                      fig.width =  beamer_textwidth * conv_cm_to_in)
+```
+
+### Objectifs de cette séquence
+Cette séquence a pour objectifs de vous présenter les différents effets de calendrier et la manière de corriger une série de ces effets  
+
+Après cette séquence vous saurez :  
+
+- Les différents effets de calendrier  
+
+- Les raisons pour lesquelles il est utile de corriger une série de ces effets  
+
+- La manière de corriger une série de ces effets  
+
+- Les diagnostics disponibles sous JDemetra+ permettant de s'assurer que la série CVS-CJO ne présente pas d'effets de calendrier résiduels
+
+
+### Questions de positionnement
+
+Pourquoi corriger des effets de calendrier ?
+\vfill
+
+Quels sont les 3 effets du calendrier ?
+\vfill
+
+Pourquoi il est utile de désaisonnaliser les régresseurs du calendrier ?
+\vfill
+
+La correction des effets de calendriers dépend de quel type d'hypothèses ?
+\vfill
+
+Que faut-il vérifier pour valider la correction des effets de calendriers ?
+\vfill
+
+# Pourquoi corriger des effets de calendrier ?
+
+## Un calendrier hétérogène
+### Un calendrier hétérogène
+
+Le calendrier est hétérogène :  
+
+- Les jours ouvrables :   
++ jours normalement travaillés compte tenu des habitudes de l'entreprise, le plus souvent, il s'agit des lundis, mardis,…, vendredis non fériés  
+
+- Les week-ends  
+
+- Les jours fériés (fêtes)  
+
+Or tous les mois n'ont pas la même composition :  
+$\implies$ Tous les mois ne sont pas «\ égaux\ » entre eux : on parle  d'**effets de calendrier**
+
+. . .
+
+Une partie des effets de calendrier est saisonnière : la CJO ne corrige que la partie non saisonnière
+
+## Les différents effets de calendrier
+### Effet longueur du mois/trimestre
+
+L'effet «\ année bissextile\ » (*leap year*)
+
+Exemples :  
+
+- La production est en principe plus élevée au cours d'un mois comportant davantage de jours ouvrables  
+- Nombre de jours ouvrables (lundis, mardis, ..., vendredis non fériés) par trimestre :
+
+```{r}
+#| echo: false
+FR <- national_calendar(list(
+  special_day("NEWYEAR"),
+  special_day("EASTERMONDAY"), # Lundi de Pâques
+  special_day("MAYDAY"), # 1er mai
+  special_day("ASCENSION"), # Jour de l'Ascension
+  fixed_day(5, 8),
+  special_day("WHITMONDAY"), # Lundi de Pentecôte
+  fixed_day(7, 14),
+  special_day("ASSUMPTION"), # Assomption
+  special_day("ALLSAINTSDAY"), # Toussaint
+  special_day("ARMISTICE")
+))
+
+jours_senegal <- list(
+  special_day("NEWYEAR"),
+	special_day("EASTERMONDAY"), # Lundi de Pâques
+  fixed_day(4, 4), # Jour de l'indépendance du Sénégal
+  special_day("MAYDAY"), # 1er mai
+  fixed_day(5, 20), # Fête Nationale
+  special_day("ASCENSION"), # Jour de l'Ascension
+	special_day("WHITMONDAY"), # Lundi de Pentecôte
+  special_day("ASSUMPTION"), # Assomption de Marie
+	special_day("ALLSAINTSDAY"), # Toussaint
+  special_day("CHRISTMAS") # Noël
+)
+
+jours_senegal <- c(
+  jours_senegal,
+  list(
+    # DEBUT_RAMADAN,
+single_day("1990-03-28"),
+single_day("1991-03-18"),
+single_day("1992-03-06"),
+single_day("1993-02-23"),
+single_day("1994-02-12"),
+single_day("1995-02-14"),
+single_day("1996-01-22"),
+single_day("1997-01-11"),
+single_day("1997-12-31"),
+single_day("1998-12-20"),
+single_day("1999-12-10"),
+single_day("2000-11-28"),
+single_day("2001-11-17"),
+single_day("2002-11-07"),
+single_day("2003-10-27"),
+single_day("2004-10-15"),
+single_day("2005-10-05"),
+single_day("2006-09-24"),
+single_day("2007-09-14"),
+single_day("2008-09-02"),
+single_day("2009-08-22"),
+single_day("2010-08-12"),
+single_day("2011-08-01"),
+single_day("2012-07-20"),
+single_day("2013-07-10"),
+single_day("2014-06-29"),
+single_day("2015-07-18"),
+single_day("2016-06-07"),
+single_day("2017-05-27"),
+single_day("2018-05-17"),
+single_day("2019-05-06"),
+single_day("2020-04-24"),
+single_day("2021-04-14"),
+single_day("2022-04-03"),
+single_day("2023-03-23"),
+single_day("2024-03-12"),
+# KORITE,
+single_day("1990-04-27"),
+single_day("1991-04-16"),
+single_day("1992-04-04"),
+single_day("1993-03-25"),
+single_day("1994-03-14"),
+single_day("1995-03-03"),
+single_day("1996-02-09"),
+single_day("1997-02-09"),
+single_day("1998-01-29"),
+single_day("1999-01-18"),
+single_day("2000-01-08"),
+single_day("2000-12-27"),
+single_day("2001-12-16"),
+single_day("2002-12-06"),
+single_day("2003-11-25"),
+single_day("2004-11-13"),
+single_day("2005-11-03"),
+single_day("2006-10-23"),
+single_day("2007-10-13"),
+single_day("2008-10-01"),
+single_day("2009-09-20"),
+single_day("2010-09-09"),
+single_day("2011-08-29"),
+single_day("2012-08-17"),
+single_day("2013-08-07"),
+single_day("2014-07-27"),
+single_day("2015-07-16"),
+single_day("2016-07-05"),
+single_day("2017-06-24"),
+single_day("2018-06-14"),
+single_day("2019-06-03"),
+single_day("2020-05-22"),
+single_day("2021-05-12"),
+single_day("2022-05-01"),
+single_day("2023-04-20"),
+single_day("2024-04-10"),
+# TABASKI,
+single_day("1990-06-24"),
+single_day("1991-06-23"),
+single_day("1992-06-11"),
+single_day("1993-06-01"),
+single_day("1994-05-21"),
+single_day("1995-05-10"),
+single_day("1996-04-29"),
+single_day("1997-04-19"),
+single_day("1998-04-08"),
+single_day("1999-03-28"),
+single_day("2000-03-17"),
+single_day("2001-03-06"),
+single_day("2002-02-23"),
+single_day("2003-02-13"),
+single_day("2004-02-02"),
+single_day("2005-01-21"),
+single_day("2006-01-11"),
+single_day("2006-12-31"),
+single_day("2007-12-21"),
+single_day("2008-12-09"),
+single_day("2009-11-11"),
+single_day("2010-11-18"),
+single_day("2011-11-07"),
+single_day("2012-10-26"),
+single_day("2013-10-16"),
+single_day("2014-10-05"),
+single_day("2015-09-25"),
+single_day("2016-09-13"),
+single_day("2017-09-02"),
+single_day("2018-08-23"),
+single_day("2019-08-12"),
+single_day("2020-07-31"),
+single_day("2021-07-21"),
+single_day("2022-06-10"),
+single_day("2023-06-29"),
+single_day("2024-06-18"),
+# TAMKHARITE,
+single_day("1990-07-04"),
+single_day("1991-07-22"),
+single_day("1992-07-11"),
+single_day("1993-06-30"),
+single_day("1994-06-19"),
+single_day("1995-06-09"),
+single_day("1996-05-28"),
+single_day("1997-05-18"),
+single_day("1998-05-07"),
+single_day("1999-04-26"),
+single_day("2000-04-15"),
+single_day("2001-04-04"),
+single_day("2002-03-24"),
+single_day("2003-03-14"),
+single_day("2004-03-02"),
+single_day("2005-02-19"),
+single_day("2006-02-09"),
+single_day("2007-01-29"),
+single_day("2008-01-19"),
+single_day("2009-01-07"),
+single_day("2009-12-27"),
+single_day("2010-12-17"),
+single_day("2011-12-06"),
+single_day("2012-11-24"),
+single_day("2013-11-14"),
+single_day("2014-11-03"),
+single_day("2015-11-30"),
+single_day("2016-10-12"),
+single_day("2017-10-01"),
+single_day("2018-09-21"),
+single_day("2019-09-10"),
+single_day("2020-08-29"),
+single_day("2021-08-19"),
+single_day("2022-08-08"),
+single_day("2023-07-28"),
+single_day("2024-07-17"),
+# MAOULOUD,
+single_day("1990-10-02"),
+single_day("1991-09-21"),
+single_day("1992-09-10"),
+single_day("1993-08-30"),
+single_day("1994-08-19"),
+single_day("1995-08-09"),
+single_day("1996-07-28"),
+single_day("1997-07-18"),
+single_day("1998-07-07"),
+single_day("1999-06-26"),
+single_day("2000-06-15"),
+single_day("2001-06-04"),
+single_day("2002-05-24"),
+single_day("2003-05-14"),
+single_day("2004-05-02"),
+single_day("2005-04-21"),
+single_day("2006-04-11"),
+single_day("2007-03-31"),
+single_day("2008-03-20"),
+single_day("2009-03-09"),
+single_day("2010-02-26"),
+single_day("2011-02-16"),
+single_day("2012-02-05"),
+single_day("2013-01-24"),
+single_day("2014-01-14"),
+single_day("2015-01-03"),
+single_day("2015-11-23"),
+single_day("2016-12-12"),
+single_day("2018-12-01"),
+single_day("2018-11-21"),
+single_day("2019-11-18"),
+single_day("2020-10-29"),
+single_day("2021-10-19"),
+single_day("2022-10-08"),
+single_day("2023-09-27"),
+single_day("2024-09-15"),
+# MAGAL,
+single_day("1990-09-09"),
+single_day("1991-08-29"),
+single_day("1992-09-18"),
+single_day("1993-10-07"),
+single_day("1994-07-27"),
+single_day("1995-07-17"),
+single_day("1996-07-05"),
+single_day("1997-06-25"),
+single_day("1998-06-14"),
+single_day("1999-06-03"),
+single_day("2000-05-23"),
+single_day("2001-05-12"),
+single_day("2002-05-01"),
+single_day("2003-04-21"),
+single_day("2004-04-09"),
+single_day("2005-03-29"),
+single_day("2006-03-19"),
+single_day("2007-03-08"),
+single_day("2008-02-26"),
+single_day("2009-02-14"),
+single_day("2010-02-03"),
+single_day("2011-01-03"),
+single_day("2012-01-13"),
+single_day("2013-01-01"),
+single_day("2013-12-22"),
+single_day("2014-12-11"),
+single_day("2015-12-01"),
+single_day("2016-11-19"),
+single_day("2017-11-08"),
+single_day("2018-10-29"),
+single_day("2019-10-18"),
+single_day("2020-10-06"),
+single_day("2021-09-26"),
+single_day("2022-09-15"),
+single_day("2023-09-04"),
+single_day("2024-08-23")
+  ))
+
+CAL <- national_calendar(jours_senegal)
+
+ny <- 5
+first_date <- c(as.numeric(format(Sys.Date(), "%Y")) - ny, 1)
+freq <- 4
+nb_days <- ts(calendar_td(CAL, freq, 
+                          first_date,
+                          ny * freq,
+                          contrasts = FALSE,
+                          groups = c(rep(1,5), rep(0, 2)))[, 2],
+              start = first_date,
+              frequency = freq)
+nb_days <- .preformat.ts(nb_days)
+colnames(nb_days) <- sprintf("T%i", 1:4)
+kableExtra::kable(nb_days)
+```
+
+
+
+### Effet type de jour, exemples : 
+
+- Les ventes du commerce de détail sont plus importantes le samedi que les autres jours de la semaine
+
+- Nombre moyen de jours par type par trimestre entre sur les 20 dernières années
+
+\footnotesize
+```{r}
+#| echo: false
+jours_semaine <- c("Monday" = "Lundi", "Tuesday" = "Mardi", "Wednesday" = "Mercredi", "Thursday" = "Jeudi", "Friday" = "Vendredi", "Saturday" = "Samedi", "Sunday" = "Dimanche")
+jours_we <- c("Monday" = "Semaine", "Tuesday" = "Semaine", "Wednesday" = "Semaine", "Thursday" = "Semaine", "Friday" = "Semaine", "Saturday" = "Samedi", "Sunday" = "Dimanche")
+ny <- 20
+last_date <- as.numeric(format(Sys.Date(), "%Y"))
+first_date <- last_date - ny
+holidays <- rjd3toolkit::holidays(
+  CAL, sprintf("%s-01-01", first_date), 
+  length = 366 * ny, single = TRUE, type = "All")
+holidays <- data.frame(date = as.Date(rownames(holidays)), holiday = holidays[, 1])
+holidays$non_holiday <- 1 - holidays$holiday
+holidays$weekday <- jours_semaine[weekdays(holidays$date)]
+holidays$semaine <- jours_we[weekdays(holidays$date)]
+holidays$quarter <- quarters(holidays$date)
+holidays$year <- as.numeric(format(holidays$date, "%Y"))
+holidays <- holidays[holidays$year < last_date, ]
+j_nf <- reshape2::dcast(data = stats::aggregate(
+  non_holiday ~weekday + quarter,
+  data = stats::aggregate(
+    non_holiday ~ year + weekday + quarter, data = holidays,
+    FUN = sum),
+  FUN = mean
+), formula = weekday ~ quarter, value.var = "non_holiday"
+)
+colnames(j_nf)[1] <- "Jours non fériés"
+j_nf <- j_nf[order(factor(j_nf[,1], levels = unique(jours_semaine), ordered = TRUE)) , ]
+j_f <- reshape2::dcast(data = stats::aggregate(
+  non_holiday ~semaine + quarter,
+  data = stats::aggregate(
+    non_holiday ~ year + semaine + quarter, data = holidays,
+    FUN = sum),
+  FUN = mean
+), formula = semaine ~ quarter, value.var = "non_holiday"
+)
+colnames(j_f)[1] <- "Jours fériés"
+j_f <- j_f[order(factor(j_f[,1], levels = unique(jours_we), ordered = TRUE)) , ]
+knitr::kable(j_nf, digits = 2,row.names = FALSE, align = "lcccc")
+knitr::kable(j_f, digits = 2,row.names = FALSE, align = "lcccc")
+```
+
+
+### Effets des jours fériés
+
+<!-- TODO : refaire tableau de façon plus claire -->
+\begin{table}[htbp]
+\small
+\centering
+\begin{tabular}{|m{2.6cm}|>{\centering\arraybackslash} m{1.3cm}|m{9.145em}|m{7.285em}|}
+\hline
+\multicolumn{2}{|m{3.9cm}|}{Types de jours fériés } & Exemples & Effets \\
+\hline
+\multirow{2}{*}{Fête mobile} & Hors Pâques / Ramadan &  
+%-- Lundi de Pâques\newline{} -- Jeudi de  l'Ascension\newline{} -- Lundi de Pentecôte\newline{}
+-- Lundi de Pâques\newline{} -- Jeudi de  l'Ascension\newline{} -- Lundi de Pentecôte\newline{} -- Tabaski/Korite/Maouloud/Tamkharite/Magal de Touba \newline{}
+& Type de jours  
+\\
+\hhline{|~---|}     & Pâques / \newline{} Ramadan  & {\cellcolor[rgb]{ .753,  .753,  .753}} & Effet graduel \\
+\hline
+\multicolumn{2}{|m{3.9cm}|}{Date fixe : ces jours fériés tombent toujours le même mois mais pas forcément le même jour de la semaine } & 
+%01/01, 01/05, 08/05, 14/07, 15/08, 01/11, 11/11, 25/12
+01/01, 04/04, 01/05, 08/05, 14/07, 15/08, 01/11, 11/11, 25/12
+& Type de jours  \\
+\hline
+\end{tabular}
+\end{table}
+
+### L'effet graduel de Pâques
+
+Pour certaines séries les variations liées à Pâques peuvent s'observer pendant les jours ou les semaines qui précèdent la fête : c'est ce qu'on appelle *effet graduel de Pâques*
+
+Exemple : les ventes de fleurs et de chocolats augmentent sensiblement à l'approche de Pâques
+
+
+{{< fa arrow-circle-right >}} a priori ce n'est pas le cas vos séries, dans RJDemetra utiliser l'option `easter.enabled = FALSE`.
+
+
+## Corriger pour comparer
+
+### Corriger pour comparer
+
+Il est nécessaire de corriger des effets de calendrier pour pouvoir faire :  
+
+- Des comparaisons temporelles   
++ Exemple : mois de longueurs différentes  
+
+- Des comparaisons sectorielles (i.e. entre différents secteurs d'activité)  
++ Exemple : le commerce et l'industrie (effet «\ type de jours\ »)  
+
+- Des comparaisons spatiales (exemple : entre différents pays)  
++ Exemple : la France et l'Allemagne n'ont pas le même nombre de jours ouvrables par mois  
+* Jours fériés différents  
+* Religions différentes (calendrier orthodoxe vs calendrier chrétien vs calendrier hégirien)
+
+
+# Comment corriger des effets de calendrier ?
+
+## De la saisonnalité dans le calendrier
+
+### Effet calendrier en partie saisonnier
+
+Une part des effets de calendrier est saisonnière :  
+
+- Le nombre de jours ouvrables du mois de février est presque toujours inférieur à celui du mois de mars  
+
+- Certains mois comptent plus de jours fériés (et donc moins de jours ouvrables) que les autres mois  
++ Exemple : le mois de mai en France
+
+$\implies$ Une part des effets de calendrier est prise en compte dans la correction des variations saisonnières
+
+
+
+### Approche économétrique retenue
+
+Hypothèse : l'effet de la longueur du mois (ou du trimestre) ou d'un certain type de jours de la semaine est constant sur toute la période d'étude
+
+On va construire des jeux de régresseurs «\ effets de calendrier\ » désaisonnalisés et pertinents d'un point de vue économique en faisant des hypothèses sur les effets des différents types de jours :  
+
+- Lundis non fériés  
+- Mardis non fériés  
+- …  
+- Dimanches non fériés  
+- Lundis fériés  
+- Mardis fériés  
+- …  
+- Dimanches fériés  
+
+Quelles sont, selon vous, les hypothèses les plus naturelles ?
+
+
+### Modèle de base (hors jours fériés)
+
+$$X_t = \sum_{i=1}^{7} \alpha_i N_{it} + \varepsilon_t$$
+
+- $N_{it}$ est le nombre de jours de lundis ($i=1$), ..., dimanches ($i=7$)
+
+- $\alpha_i$ effet d'un jour de type $i$
+
+{{< fa arrow-circle-right >}} problème de colinéarité, on réécrit le modèle et on "désaisonnalise" les effets de calendrier :
+
+$$
+X_t =  \sum_{i=1}^{6} \beta_i \big((N_{it} - \bar{N_{it}}) - (N_{7t} - \bar{N_{7t}})\big) + \bar{\alpha} (N_t - \bar{N}_t) +  \varepsilon_t
+$$
+
+Avec : $N_t = \sum_{i=1}^7 N_{it}$
+
+- $\bar{\alpha} = \frac{1}{7} \sum_{i=1}^{7} \alpha_i$ = effet moyen d'un jour quelconque
+
+- $\beta_i = \alpha_i - \bar{\alpha}$ = effet spécifique d'un jour de type $i$
+
+
+## Les différents jeux de régresseurs 
+
+### Exemples de jeux de régresseurs
+
+
+```{r}
+#| echo: false
+data_reg <- data.frame(
+  "Modèle" = c(
+    "TD7", "TD4", "TD3", "TD3c", "TD2c", "TD2"
+  ),
+  "Définition" = c(
+    "(Lundi), (Mardi), $\\dots$, (Samedi)",
+    "(Lundi = $\\dots$ = Jeudi), (Vendredi), (Samedi)",
+    "(Lundi = $\\dots$ = Vendredi), (Samedi)",
+    "(Lundi = $\\dots$ = Jeudi), (Vendredi = Samedi)",
+    "(Lundi = $\\dots$ = Samedi)",
+    "(Lundi = $\\dots$ = Vendredi)"
+  ),
+  "Référence (contraste)" = c(
+    "Dimanche",
+    "Dimanche",
+    "Dimanche",
+    "Dimanche",
+    "Dimanche",
+    "Samedi + Dimanche"
+  ),
+  "Nombre de régresseurs" = c(
+    "6 + LPY", "3 + LPY", "2 + LPY", "2 + LPY", "1 + LPY", "1+LPY"
+  )
+)
+colnames(data_reg) <- c("Modèle", "Définition", "Référence (contraste)", "Nombre de régresseurs")
+kable(data_reg,escape = FALSE, booktabs = TRUE, format = "latex") %>% kable_styling(latex_options = c("scale_down"))
+```
+
+
+Dans JDemetra+, TD2 = *working days* et TD6 = *trading-days*.
+
+{{< fa info-circle >}} Package [`rjd3toolkit`](https://github.com/palatej/rjd3toolkit) permet de générer tous les types de jeux de régresseurs.
+
+## Une correction a priori de l'effet année bissextile
+
+### Une correction a priori de l'effet année bissextile
+
+@B1992 suggère deux méthodes pour corriger de l'effet longueur du mois :
+
+1. Ajouter un régresseur LY.
+
+2. Faire une correction *a priori* de la longueur du mois. 
+Par exemple, `rjd3toolkit::ts_adjust(. ,transform.adjust = "LeapYear")` équivaut à multiplier la série brute par $\alpha_{t} = \left\{ \begin{array}{rl} 
+\frac{28,25}{29} & \mbox{si } t \mbox{ est un mois de février bissextil } \\
+\frac{28,25}{28} & \mbox{si } t \mbox{ est un mois de février non bissextil } \\
+1 & \mbox{sinon}
+\end{array}
+\right.$
+
+Les deux méthodes sont équivalentes si l'on a un modèle **multiplicatif** et coefficients estimé proche de $0,035$ (ce qui est souvent le cas)
+
+### Les séries en stock
+
+La majorité des séries sont mesurées en flux (somme de séries journalières inobservées, ex : PIB) mais certaines sont mesurées en stock (une certaine valeur à un certain jour $w$ du mois).
+
+Des régresseurs différents peuvent alors être utilisés :
+$$
+D(w)_{j,t}=
+\begin{cases}
+1&\text{ si le jour }\tilde w\text{ est un jour }j \\
+-1 &\text{ si le jour }\tilde w\text{ est un dimanche} \\
+0 & \text{ sinon}
+\end{cases}
+$$
+avec $\tilde w$ le minimum entre $w$ et la longueur du mois $t$.
+
+## Comment choisir et valider le choix du jeu de régresseurs ?
+
+### Se poser les bonnes questions
+
+Avant de choisir entre un jeu de régresseurs, il faut se poser les questions suivantes :  
+
+- Est-ce que ma série peut présenter des effets de calendrier (sens économique) ? Ces effets sont-ils mesurables ?  
+
+- Quels jours ont a priori un effet sur les valeurs de ma série ?  
+
++ Les jours non fériés du lundi au samedi ?  
++ Les jours non fériés du lundi au vendredi ?  
++ Tous les jours non fériés ont-ils a priori le même effet sur les valeurs de ma série ?
+
+### Valider le choix réalisé
+
+Après avoir choisi un des jeux de régresseurs, peut-on enlever un des régresseurs ?  
+
+- la variable «\ Leap Year\ » ?  
++ Effet «\ longueur du mois\ » = 0  
+
+- un des autres régresseurs ?  
++ Effet «\ type de jours\ » = 0 pour le régresseur enlevé  
+
+
+## Les effets fêtes mobiles
+
+### Fêtes mobiles
+
+Une fête mobile peut avoir 2 effets différents :
+
+- Le jour est férié : c'est dans les effets jours ouvrables
+
+- Il peut y avoir un effet graduel (augmentation des prix avant la fête, déplacements en famille, etc.)
+
+Plusieurs façons de modéliser ces effets
+
+### `easter[w]`
+
+$$
+E(w,t)=\frac{1}{w}\times\text{nb de jours avant Pâques qui tombe dans le mois/trimestre}
+$$
+On soustrait ensuite la moyenne de long-terme de la variable (calculée sur 500 ans)
+
+\centering
+```{r, out.width="80%"}
+knitr::include_graphics(sprintf("img/seq5_easter%i.png", 1))
+```
+
+
+### Statistics Canada `sceaster[w]`
+
+Avec $n_E$ le nombre de jours avant $w$ jours avant Pâques (y.c) en Mars
+$$
+E(w,t)=
+\begin{cases}
+n_E/w&\text{ en Mars}\\
+-n_E/w&\text{ en Avril}
+\end{cases}
+$$
+<!-- Interprétation : une compensation entre les deux mois/trimestres -->
+
+### Modèles généraux
+
+\centering
+```{r, out.width="80%"}
+knitr::include_graphics(sprintf("img/seq5_easter%i.png", 2:3))
+```
+
+## Autres effets liées aux calendriers
+
+### Vacances, ponts, météo ?
+
+
+Les ponts sont considérés comme des jours travaillés mais souvent utilisés pour prendre des "longs weekends".\
+{{< fa info-circle >}} Faut-il les inclure dans les régresseurs JO ?
+
+. . .
+
+Leur étude peut être compliquée :
+
+- Dépend de la conjoncture (périodes de croissance on voudra continuer la production)
+
+- Pour la météo : pas la même intensité chaque année
+
+- Quand deux ponts au même mois, parfois juste un seul des deux pris en compte (sur-ajustement)
+
+
+
+. . .
+
+Recommandation : ne pas corriger des vacances, ponts, météo mais effectuer des études supplémentaires pour informer les utilisateurs des données
+
+# Les outils disponibles sous JDemetra+ 
+
+## Les régresseurs de JDemetra+
+
+### Les outils disponibles sous JDemetra+ et RJDemetra
+
+JDemetra+ et RJDemetra proposent 2 jeux de régresseurs :  
+
+- Trading Days (6 régresseurs)  
++ On distingue tous les jours de la semaine du lundi au samedi  
+
+- Working Days (1 régresseur)  
++ On distingue les jours de la semaine (lundi = mardi = … = vendredi) et les week-ends  
+
+- Leap year (1 régresseur ou corrigé avant la CJO)
+
+On peut également utiliser ses propres jeux de régresseurs
+
+## Tests de significativité des coefficients
+
+### Deux tests disponibles
+
+Dans les diagnostics («\ Pre-processing\ »), JD+ fournit des tests de significativité portant sur le jeu de régresseurs choisi par l'utilisateur :
+
+- Test de Fisher de nullité conjointe des coefficients ($H_0$ tous les coefficients sont nuls et $H_1$ au moins un des coefficients n'est pas nul)  
++ Peut conduire à enlever le jeu de régresseurs du modèle Reg-ARIMA  
+
+- Pour chaque régresseur, test de Student de nullité du coefficient ($H_0$ le coefficient est nul et $H_1$ le coefficient n'est pas nul)  
++ Peut conduire à changer de jeu de régresseurs
+
+
+## Test de l'effet graduel de Pâques
+
+### Présence d'un effet graduel de Pâques ?
+Est-ce que ma série peut présenter un effet graduel de Pâques ? 
+
+- Si oui, j'introduis un régresseur permettant de corriger ma série de l'effet graduel 
++ Variable «\ Easter\ » dans JDemetra+  
+
+- Si non, je n'en introduis pas  
+
+- Si je ne sais pas, je peux demander à JDemetra+ de faire un test pour m'aider à décider
++ JDemetra+ peut réaliser un «\ pré-test\ » afin de savoir si la série présente un effet graduel de Pâques. Si c'est le cas, JD+ introduit le régresseur «\ Easter\ [n]\ » (n=1,…, 20) dans le modèle
+
+Dans les diagnostics («\ Pre-processing\ »), JDemetra+ fournit un test de la significativité du coefficient associé au régresseur «\ Easter\ [n]\ » (test de Student : $H_0$ coeff(Easter [n]) = 0 et $H_1$ coeff(Easter [n]) $\ne$ 0)
+
+# Vérifier la qualité de la CJO
+
+## Sur la qualité du modèle Reg-ARIMA
+
+###
+
+- Test de fisher de nullité des coefficients (package `car` sous R) ou test de student pour voir si on peut simplifier le modèle
+
+- Tests spectraux : moins puissants
+
+- Le changement du jeu de régresseur peu avoir un impact sur :
+
+- le modèle ARIMA
+
+- l'autocorrélation, l'hétéroscédasticité et la normalité
+
+## Sur la désaisonnalisation
+
+### Tests d'effets calendaires résiduels (1/2)
+
+Tests les plus importants ! Effectués sur la série désaisonnalisée (`sa`) et sur l'irrégulier (`i`).
+
+{{< fa exclamation-triangle >}} Test effectué sur les 8 dernières années sous JDemetra+ et ensemble série sous RJDemetra !
+
+{{< fa info-circle >}} Sous JDemetra+, pour changer les paramètres : Tools > option > Statistics > Diagnostics > residual trading days diagnostics 
+
+{{< fa info-circle >}} Tests reproductibles avec `rjd3toolkit::td_f`. Trois modélisations possibles, $(H_0):\beta_1=\dots = \beta_6=0$ :
+
+1. Par défaut sous JDemetra+ 2.x.y et `model = "R100"` sous `rjd3toolkit`
+$$
+y_t=c + \alpha y_{t-1} + \sum_{i=1}^{6} \beta_i (N_{it} - N_{7t}) +  \varepsilon_t
+$$
+(Des résultats différents peuvent être trouvés entre `rjd3toolkit` et JDemetra+ du fait de méthodes d'estimations différentes des modèles)
+<!-- JDemetra+ 2.0 : OLS -->
+<!-- rjd3toolkit: MLE -->
+
+### Tests d'effets calendaires résiduels (2/2)
+
+2. Par défaut sous JDemetra+ 3.x.y et `model = "R011"` sous `rjd3toolkit` 
+$$
+y_t =\sum_{i=1}^{6} \beta_i (N_{it} - N_{7t}) +  \varepsilon_t\text{ avec }\varepsilon_t\sim ARIMA(0,1,1)
+$$
+
+3. `model = "WN"`
+$$
+y_t - \bar y =\sum_{i=1}^{6} \beta_i (N_{it} - N_{7t}) +  \varepsilon_t
+$$
+
+avec $y_t=sa_t$ ou $y_t=i_t$ si le modèle est additif, $y_t=\log(sa_t)$ ou $y_t=\log(i_t)$ si le modèle est additif.
+
+Voir `?rjd3toolkit::td_f()` pour les autres modèles.
+
+{{< fa exclamation-triangle >}} il ne s'agit pas des composantes finales mais de celles issues de X-11 !
+
+# Conclusion
+
+## Les essentiels 
+
+### Les essentiels
+
+- La correction des effets de calendrier est nécessaire pour faire des comparaisons temporelles et spatiales
+
+- On distingue 3 différents effets : effet «\ longueur du mois\ » , effet «\ type de jours\ » et effet «\ fêtes mobiles\ » (Pâques)  
+
+- On élabore ses propres jeux de régresseurs en faisant des hypothèses sur la similitude des types de jours
+
+- Il faut s'assurer de l'absence d'effets de calendrier résiduels  
+
+- Sur des séries trimestrielles, très difficile d'estimer un effet !
+
+
+## Bibliographie
+
+### Bibliographie  {.noframenumbering}
+
+\footnotesize
+
+\begin{thebibliography}{999}
+\bibitem[Données désaisonnalisées FAQ]{FAQ} Données désaisonnalisées — Foire aux questions, Statistique Canada. \url{https://www150.statcan.gc.ca/n1/dai-quo/btd-add/btd-add-fra.htm}
+\bibitem[Attal-Toubert (2012)]{A2012} Attal-Toubert, K. (2012), Régresseurs pour effets de calendrier : comment les construire, comment les choisir ? Actes des 11\ieme{} Journées de Méthodologie Statistique, \url{http://jms-insee.fr/jms2012s14_3/}.
+\bibitem[Kirchner et al (2018)]{K2018} Kirchner R., Ladiray D. et Mazzi G.L, Quality Measures and Reporting for Seasonal Adjustment, in Handbook on Seasonal Adjustment, edited by G. L. Mazzi, co-edited by D. Ladiray, European Union, Luxembourg. \url{ec.europa.eu/eurostat/web/products-manuals-and-guidelines/-/KS-GQ-18-001}.
+\bibitem[Ladiray, Quartier-la-Tente (2018)]{LD2018} Ladiray D. et Quartier-la-Tente A. (2018), « Du bon usage des modèles Reg-ARIMA en désaisonnalisation ». Actes des 13\ieme{} Journées de Méthodologie Statistique, \url{http://jms-insee.fr/jms2018s05_1/}.
+\bibitem[Bell (1992)]{B1992} Bell, W. R. (1992), Alternative Approaches to Length of Month Adjustment, Research Report Series 1992-17, Satistical Research Division, U. S. Census Bureau, Washington DC. \url{https://www.census.gov/ts/papers/rr92-17.pdf}.
+\end{thebibliography}
+
+### Bibliographie  {.noframenumbering}
+
+\footnotesize
+
+\begin{thebibliography}{999}
+\bibitem[Ladiray (2018)]{L2018} Ladiray, D. (2018), Calendar effects, in Handbook on Seasonal Adjustment, edited by G. L. Mazzi, co-edited by D. Ladiray, European Union, Luxembourg. \url{ec.europa.eu/eurostat/web/products-manuals-and-guidelines/-/KS-GQ-18-001}.
+
+\bibitem[Palate (2014)]{P2014} Palate, J. (2014), ‘Calendars in JDemetra+', \url{https://ec.europa.eu/eurostat/cros/content/calendar-regressors-jd_en}.
+
+\bibitem[Eurostat (2015)]{E2015} Eurostat (2015), The ESS guidelines for seasonal adjustment, Eurostat manuals and guidelines, Product Code: KS-GQ-15-001. \url{http://ec.europa.eu/eurostat/web/products-manuals-and-guidelines/-/KS-GQ-15-001}.
+\end{thebibliography}

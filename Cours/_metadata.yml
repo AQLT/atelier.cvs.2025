@@ -1,5 +1,5 @@
-subtitle: "{{< var titre.pres >}}"
-author: "{{< var auteur >}}"
+subtitle: "Désaisonnaliser une série temporelle"
+author: "Alain Quartier-la-Tente"
 format:
   beamer:
     template: template.tex
@@ -11,6 +11,9 @@ format:
 fontsize: 10pt
 classoption: 'usepdftitle=false,french,handout'
 themeoptions: "coding=utf8,language=french"
-division: "{{< var sous-titre >}}"
+lang: fr
+language:
+ title-block-author-single: Auteur
+# division: "CEPE - 2023"
 departement: ""
 logo: "img/logo"
