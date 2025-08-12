@@ -1,8 +1,8 @@
 auteur: "Alain Quartier-la-Tente"
 titre:
-  pres: "Template formation"
-  website: "FORMATION TEST"
+  pres: "Désaisonnaliser une série temporelle"
+  website: "Atelier CVS 2025"
 sous-titre: ""
-repo-github: "formation.template"
-description: "Formation test"
+repo-github: "atelier.2025.cvs"
+description: "Atelier désaisonnaliser une série temporelle"
 

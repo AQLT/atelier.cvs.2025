@@ -45,6 +45,7 @@ create_cmd <- function(dir){
 				site_dir,
 				gsub("qmd$", "pdf", file.path(dirname(f), "pres", basename(f)))
 		),
+		'',
 		sprintf('add_handout("%s")', file.path(dir, "_metadata.yml")),
 		'',
 		sprintf("quarto::quarto_render('%s')\nfile.copy('%s', '%s', overwrite = TRUE)",

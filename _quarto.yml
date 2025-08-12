@@ -2,9 +2,10 @@ project:
   type: website
   render:
     - "*.qmd"
-    - "!Cours"
+#     - "!Cours"
   resources:
     - "*/Cours/*.pdf"
+    - "data"
     - "robots.txt"
 
 website:
@@ -12,7 +13,7 @@ website:
   description: "{{< var description >}}"
   # site-url : pour sitemap.xml
   # Penser à également modifier le fichier robots.txt
-  site-url: "https://aqlt.github.io/formation.template"
+  site-url: "https://aqlt.github.io/formation.2025.cvs"
   favicon: img/favicon.ico
   google-analytics:
     tracking-id: "G-X652XRGDPL"
@@ -21,7 +22,7 @@ website:
     logo-alt: "AQLT"
     right:
       - text: "Ensemble formations"
-        href: https://aqlt.github.io/formations/
+        href: https://aqlt.github.io/teaching/
       - icon: github
         href: "http://github.com/AQLT/{{< var repo-github >}}"
     left:
@@ -29,7 +30,7 @@ website:
         file: index.qmd
 
   page-footer:
-    left: "Copyright 2023, Alain Quartier-la-Tente, Insee"
+    left: "Copyright 2025, Alain Quartier-la-Tente"
     right:
       - icon: github
         href: http://github.com/AQLT
@@ -40,7 +41,7 @@ website:
 
 format:
   html:
-    theme: "Litera"
+    theme: Litera
     toc: true
 
 lang: fr
