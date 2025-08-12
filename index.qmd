@@ -47,7 +47,7 @@ Vous pouvez retrouver [ici](manuel_installation.qmd) le manuel d'installation de
 
 5.  [JDemetra+ en production](TP/R_5_JD_in_production.qmd) et programmes [1-cruncher.R](R-macronia/1-cruncher.R) et [2-tableau de bord.R](R-macronia/2-tableau de bord.R)
 
-6. Autres programmes : [3-imae-calage](R-macronia/3-imae-calage.R) et [4-cvs-indirecte](R-macronia/4-cvs-indirecte.R)
+6. Autres programmes : [3-imae-calage.R](R-macronia/3-imae-calage.R) et [4-cvs-indirecte.R](R-macronia/4-cvs-indirecte.R)
 
 
 
@@ -114,5 +114,5 @@ cat(sprintf("- [%s](PDF/%s)", all_f_pdf, all_f_pdf),
 	
 # {{< fa copyright >}} Licence
 
-Ces supports de cours sont librement réutilisable sous © 2025 Alain Quartier-la-Tente, FMI [CC BY-NC-SA 4.0 <img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Licence Creative Commons" style="display: inline-block; margin: 0"/>](http://creativecommons.org/licenses/by-nc-sa/4.0/).
+Ces supports de cours sont librement réutilisable sous © 2025 Alain Quartier-la-Tente [CC BY-NC-SA 4.0 <img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Licence Creative Commons" style="display: inline-block; margin: 0"/>](http://creativecommons.org/licenses/by-nc-sa/4.0/).
 

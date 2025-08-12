@@ -2,7 +2,7 @@ project:
   type: website
   render:
     - "*.qmd"
-#     - "!Cours"
+    - "!Cours"
   resources:
     - "*/Cours/*.pdf"
     - "data"
