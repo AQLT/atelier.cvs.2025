@@ -1,0 +1,1884 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.6">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Alain Quartier-la-Tente">
+
+<title>{{&lt; var titre.website &gt;}} – 5 - JDemetra+ en production</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../img/favicon.ico" rel="icon">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Pas de résultats",
+    "search-matching-documents-text": "documents trouvés",
+    "search-copy-link-title": "Copier le lien vers la recherche",
+    "search-hide-matches-text": "Cacher les correspondances additionnelles",
+    "search-more-match-text": "correspondance de plus dans ce document",
+    "search-more-matches-text": "correspondances de plus dans ce document",
+    "search-clear-button-title": "Effacer",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Annuler",
+    "search-submit-button-title": "Envoyer",
+    "search-label": "Recherche"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-X652XRGDPL"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+ 
+  gtag('consent', 'default', {
+    'ad_storage': 'denied',
+    'analytics_storage': 'denied'
+  });
+gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
+</script>
+<script src="../site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="../site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Atelier CVS 2025</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Recherche"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Basculer la navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> <i class="bi bi-house" role="img">
+</i> 
+<span class="menu-text">Désaisonnaliser une série temporelle</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="https://aqlt.github.io/teaching/"> 
+<span class="menu-text">Ensemble formations</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="http://github.com/AQLT/atelier.2025.cvs"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Sur cette page</h2>
+   
+  <ul>
+  <li><a href="#sec-jwsacruncher" id="toc-sec-jwsacruncher" class="nav-link active" data-scroll-target="#sec-jwsacruncher"><span class="header-section-number">1</span> JWSACruncher et <code>rjwsacruncher</code></a>
+  <ul class="collapse">
+  <li><a href="#sec-installation" id="toc-sec-installation" class="nav-link" data-scroll-target="#sec-installation"><span class="header-section-number">1.1</span> Configuration du JWSACruncher</a></li>
+  <li><a href="#utilisation-du-jwsacruncher" id="toc-utilisation-du-jwsacruncher" class="nav-link" data-scroll-target="#utilisation-du-jwsacruncher"><span class="header-section-number">1.2</span> Utilisation du JWSACruncher</a>
+  <ul class="collapse">
+  <li><a href="#création-du-fichier-de-paramètres-avec-create_param_file" id="toc-création-du-fichier-de-paramètres-avec-create_param_file" class="nav-link" data-scroll-target="#création-du-fichier-de-paramètres-avec-create_param_file"><span class="header-section-number">1.2.1</span> Création du fichier de paramètres avec <code>create_param_file()</code></a></li>
+  <li><a href="#lancement-du-jwsacruncher" id="toc-lancement-du-jwsacruncher" class="nav-link" data-scroll-target="#lancement-du-jwsacruncher"><span class="header-section-number">1.2.2</span> Lancement du JWSACruncher</a></li>
+  </ul></li>
+  <li><a href="#mise-à-jour-des-données-avec-la-version-3" id="toc-mise-à-jour-des-données-avec-la-version-3" class="nav-link" data-scroll-target="#mise-à-jour-des-données-avec-la-version-3"><span class="header-section-number">1.3</span> Mise à jour des données avec la version 3</a></li>
+  </ul></li>
+  <li><a href="#sec-rjd3" id="toc-sec-rjd3" class="nav-link" data-scroll-target="#sec-rjd3"><span class="header-section-number">2</span> Mise à jour des metadonnées avec <code>rjd3workspace</code></a></li>
+  <li><a href="#sec-rjdworkspace" id="toc-sec-rjdworkspace" class="nav-link" data-scroll-target="#sec-rjdworkspace"><span class="header-section-number">3</span> Mise à jour des metadonnées avec <code>rjdworkspace</code></a></li>
+  <li><a href="#améliorer-le-suivi-de-la-production" id="toc-améliorer-le-suivi-de-la-production" class="nav-link" data-scroll-target="#améliorer-le-suivi-de-la-production"><span class="header-section-number">4</span> Améliorer le suivi de la production</a>
+  <ul class="collapse">
+  <li><a href="#ggdemetra" id="toc-ggdemetra" class="nav-link" data-scroll-target="#ggdemetra"><span class="header-section-number">4.1</span> ggdemetra</a></li>
+  <li><a href="#rjdqa" id="toc-rjdqa" class="nav-link" data-scroll-target="#rjdqa"><span class="header-section-number">4.2</span> rjdqa</a></li>
+  <li><a href="#rjdmarkdown" id="toc-rjdmarkdown" class="nav-link" data-scroll-target="#rjdmarkdown"><span class="header-section-number">4.3</span> rjdmarkdown</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">5 - JDemetra+ en production</h1>
+<p class="subtitle lead">Désaisonnaliser une série temporelle</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Auteur</div>
+    <div class="quarto-title-meta-contents">
+             <p>Alain Quartier-la-Tente </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<blockquote class="blockquote">
+<p>L’objectif de ce TP est d’apprendre à manipuler des workspaces pour une mise en production.</p>
+</blockquote>
+<p>Pour installer tous les packages utiles de ce TP, lancer le programme :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>packages_to_install <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"RJDemetra"</span>, <span class="st">"remotes"</span>, <span class="st">"rjdqa"</span>, <span class="st">"ggdemetra"</span>, <span class="st">"rjdmarkdown"</span>, <span class="st">"rjwsacruncher"</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"rjd3toolkit"</span>, <span class="st">"rjd3x13"</span>, <span class="st">"rjd3tramoseats"</span>, <span class="st">"rjd3providers"</span>, <span class="st">"rjd3workspace"</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>packages <span class="ot">&lt;-</span> packages_to_install[<span class="sc">!</span> packages_to_install <span class="sc">%in%</span> <span class="fu">installed.packages</span>()[,<span class="st">"Package"</span>]]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">length</span>(packages) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>      packages, </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">repos =</span> <span class="fu">c</span>(<span class="st">"https://aqlt.r-universe.dev"</span>, <span class="st">"https://cloud.r-project.org"</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span> <span class="st">"rjdworkspace"</span> <span class="sc">%in%</span> <span class="fu">installed.packages</span>()[,<span class="st">"Package"</span>])</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    remotes<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"InseeFrLab/rjdworkspace"</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                            <span class="at">INSTALL_opts =</span> <span class="st">"--no-multiarch"</span>)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Lors de la mise en production, le plus simple est de manipuler des workspaces et de mettre à jour les modèles, lors de l’arrivée de nouvelles données à travers le <a href="https://github.com/jdemetra/jwsacruncher">JWSACruncher</a>. Pour faciliter son utilisation depuis R, le package <code>rjwsacruncher</code> peut être utilisé.</p>
+<p>Lorsque les workspaces sont créés depuis R, on perd toutes les métadonnées (lien vers les fichiers, commentaires, etc.), une solution pour cela : utiliser <a href="https://github.com/InseeFrLab/rjdworkspace"><code>rjdworkspace</code></a> (package non publié sur le CRAN) pour récupérer ces données depuis un autre workspace. Pour la version 3, <code>rjd3workspace</code> contient toutes les fonctionnalités de <code>rjdworkspace</code>.</p>
+<p>Dans ce TP on utilisera les données du package <code>RJDemetra</code> mais n’hésitez pas à utiliser vos propres séries.</p>
+<section id="sec-jwsacruncher" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> JWSACruncher et <code>rjwsacruncher</code></h1>
+<section id="sec-installation" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="sec-installation"><span class="header-section-number">1.1</span> Configuration du JWSACruncher</h2>
+<p>Pour éviter que le package <code>rjwsacruncher</code> soit trop volumineux, il ne contient pas le JWSAcruncher de JDemetra+. Voir <a href="../manuel_installation.html">manuel d’installation</a> pour le téléchargement et la configuration du JWSACruncher.</p>
+<p>Pour indiquer à <code>rjwsacruncher</code> où se trouve le JWSACruncher, le plus simple est de mettre à jour l’option <code>cruncher_bin_directory</code> :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("rjwsacruncher") # Si pas déjà installé</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjwsacruncher)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Chemin vers le dossier bin du JWSACruncher</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Remplacer "jwsacruncher-2.2.4/bin" par votre propre chemin.</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">cruncher_bin_directory =</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">"jwsacruncher-2.2.4/bin"</span>) </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">getOption</span>(<span class="st">"cruncher_bin_directory"</span>) <span class="co"># Pour afficher la valeur actuelle</span></span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "jwsacruncher-2.2.4/bin"</code></pre>
+</div>
+</div>
+</section>
+<section id="utilisation-du-jwsacruncher" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="utilisation-du-jwsacruncher"><span class="header-section-number">1.2</span> Utilisation du JWSACruncher</h2>
+<p>Pour lancer le JWSACruncher il faut trois fichiers :</p>
+<ul>
+<li>un fichier contenant les paramètres sur la méthode de rafraîchissement à utilisée pour mettre à jour le workspace (créé à partir de la fonction <code>create_param_file()</code> ou <code>list2param_file()</code>) ;<br>
+</li>
+<li>un workspace valide de JDemetra+ ;<br>
+</li>
+<li>l’adresse vers le JWSACruncher (option <code>cruncher_bin_directory</code>).</li>
+</ul>
+<p>Dans le package <code>rjwsacruncher</code>, les principales fonctions associées au lancement du JWSACruncher sont :</p>
+<ul>
+<li><code>create_param_file()</code> ou <code>list2param_file()</code> qui permet de créer le fichier de paramètres ;<br>
+</li>
+<li><code>cruncher()</code> qui permet de lancer le JWSACruncher sur un workspace à partir d’un fichier de paramètres ;<br>
+</li>
+<li><code>cruncher_and_param()</code> qui permet de lancer le JWSACruncher tout en créant le fichier de paramètres et de personnaliser certaines sorties du JWSACruncher.</li>
+</ul>
+<section id="création-du-fichier-de-paramètres-avec-create_param_file" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="création-du-fichier-de-paramètres-avec-create_param_file"><span class="header-section-number">1.2.1</span> Création du fichier de paramètres avec <code>create_param_file()</code></h3>
+<p>Les paramètres de la fonction <code>create_param_file()</code> sont les mêmes que ceux décrits dans le wiki du JWSACruncher de JDemetra+ (<a href="https://github.com/jdemetra/jwsacruncher/wiki" class="uri">https://github.com/jdemetra/jwsacruncher/wiki</a>). Les trois paramètres les plus importants de <code>create_param_file()</code> sont :</p>
+<ol type="1">
+<li><code>policy</code> qui est la méthode de rafraîchissement utilisée (voir tableau ci-dessous).</li>
+</ol>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<table class="table table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Les différentes politiques de rafraîchissement</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Option sous JDemetra+</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Option du cruncher</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Nom court</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Signification</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Current[AO]: fixed model + AO for new data</td>
+<td style="text-align: left;">current</td>
+<td style="text-align: left;">n</td>
+<td style="text-align: left;">Le modèle ARIMA, les outliers et les autres paramètres du modèle de régression ne sont ni ré-identifiés ni ré-estimés. Le schéma de décomposition est inchangé. Un additive outlier (AO) est ajouté à chaque nouvelle donnée. (depuis v.2.2.3)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Partial concurrent adjustment -&gt; Fixed model</td>
+<td style="text-align: left;">fixed</td>
+<td style="text-align: left;">f</td>
+<td style="text-align: left;">Le modèle ARIMA, les outliers et les autres paramètres du modèle de régression ne sont ni ré-identifiés ni ré-estimés. Le schéma de décomposition est inchangé. (depuis v.2.2.3)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Partial concurrent adjustment -&gt; Estimate regression coefficients</td>
+<td style="text-align: left;">fixedparameters</td>
+<td style="text-align: left;">fp</td>
+<td style="text-align: left;">Le modèle ARIMA, les outliers et les autres paramètres du modèle regARIMA ne sont pas ré-identifiés. Les coefficients du modèle ARIMA sont fixés et les autres paramètres du modèle de régression sont ré-estimés. Le schéma de décomposition est inchangé.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Partial concurrent adjustment -&gt; Estimate regression coefficients + MA parameters of the ARIMA model</td>
+<td style="text-align: left;">fixedarparameters</td>
+<td style="text-align: left;">farp</td>
+<td style="text-align: left;">Le modèle ARIMA, les outliers et les autres paramètres du modèle regARIMA ne sont pas ré-identifiés. Les coefficients AR du modèle ARIMA sont fixes, les autres coefficients sont réestimés (coefficients MA + régresseurs). Le schéma de décomposition est inchangé. (since v.3.4.0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Partial concurrent adjustment -&gt; Estimate regression coefficients + Arima parameters</td>
+<td style="text-align: left;">parameters (by default)</td>
+<td style="text-align: left;">p</td>
+<td style="text-align: left;">Le modèle ARIMA, les outliers et les autres paramètres du modèle de régression ne sont pas ré-identifiés mais sont tous ré-estimés. Le schéma de décomposition est inchangé.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Partial concurrent adjustment -&gt; Estimate regression coefficients + Last outliers</td>
+<td style="text-align: left;">lastoutliers</td>
+<td style="text-align: left;">l</td>
+<td style="text-align: left;">Le modèle ARIMA, les outliers (sauf ceux de la dernière année) et les autres paramètres du modèle de régression ne sont pas ré-identifiés mais sont tous ré-estimés. Les outliers de la dernière année sont ré-identifiés. Le schéma de décomposition est inchangé.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Partial concurrent adjustment -&gt; Estimate regression coefficients + All outliers</td>
+<td style="text-align: left;">outliers</td>
+<td style="text-align: left;">o</td>
+<td style="text-align: left;">Le modèle ARIMA et les paramètres du modèle regARIMA autres que les outliers ne sont pas ré-identifiés mais ré-estimés. Tous les outliers sont ré-identifiés. Le schéma de décomposition est inchangé.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Partial concurrent adjustment -&gt; Estimate regression coefficients + Arima model</td>
+<td style="text-align: left;">stochastic</td>
+<td style="text-align: left;">s</td>
+<td style="text-align: left;">Ré-identification de tous les paramètres du modèle regARIMA hormis les variables calendaires. Le schéma de décomposition est inchangé.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Concurrent</td>
+<td style="text-align: left;">complete (or concurrent)</td>
+<td style="text-align: left;">c</td>
+<td style="text-align: left;">Ré-identification de tout le modèle regARIMA.</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+<ol start="2" type="1">
+<li><code>matrix_item</code> qui est une chaîne de caractères contenant les noms des paramètres à exporter. Par défaut, ce sont ceux de l’option <a href="../PDF/output_jd.pdf"><code>default_matrix_item</code></a>. On peut donc au choix modifier l’option <code>default_matrix_item</code> ou le paramètre <code>matrix_item</code> :</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjwsacruncher)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Pour afficher les paramètres par défaut :</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">getOption</span>(<span class="st">"default_matrix_item"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Pour modifier les paramètres par défaut pour n'exporter par exemple</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># que les critères d'information :</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">default_matrix_item =</span> <span class="fu">c</span>(<span class="st">"likelihood.aic"</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"likelihood.aicc"</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"likelihood.bic"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"likelihood.bicc"</span>))</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<ol start="3" type="1">
+<li><code>tsmatrix_series</code> qui est une chaîne de caractères contenant les noms des paramètres à exporter. Par défaut, ce sont ceux de l’option <a href="../PDF/output_jd.pdf"><code>default_tsmatrix_series</code></a>. On peut donc au choix modifier l’option <code>default_tsmatrix_series</code> ou le paramètre <code>tsmatrix_series</code> :</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pour afficher les paramètres par défaut :</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getOption</span>(<span class="st">"default_tsmatrix_series"</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Pour modifier les paramètres par défaut pour n'exporter par exemple que</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># la série désaisonnalisée et ses prévisions :</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">default_tsmatrix_series =</span> <span class="fu">c</span>(<span class="st">"sa"</span>, <span class="st">"sa_f"</span>))</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Pour voir l’ensemble des paramètres, il suffit d’utiliser sous R la commande <code>?create_param_file</code>.</p>
+<p>Après cela, il ne reste plus qu’à créer le fichier de paramètres. Le fichier de paramètre est différent entre la version 3.0.0 de JDemetra+ et les versions antérieures. Les fonctions de création des fichiers de paramètres ont un paramètre <code>v3</code> qui permet de spécifier si l’on veut que le fichier soit compatible avec la version 3.0.0. Sa valeur par défaut est <code>getOption("is_cruncher_v3")</code> : si l’on utilise la version 3.0.0 ou plus, le plus simple est donc de changer cette option <code>options(is_cruncher_v3 = TRUE)</code>. Ci-dessous quelques exemples.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>export_dir <span class="ot">&lt;-</span> <span class="fu">tempdir</span>() <span class="co"># Remplacer ici par le dossier d'export souhaité</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Un fichier parametres.param sera créé dans le dossier export_dir</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># avec la politique de rafraîchissement "lastoutliers" </span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># et les autres paramètres par défaut</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">create_param_file</span>(<span class="at">dir_file_param =</span> export_dir,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                  <span class="at">policy =</span> <span class="st">"lastoutliers"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Si l'on a modifié les options "default_matrix_item" et "default_tsmatrix_series" pour</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># n'exporter que les critères d'information, la série désaisonnalisée et ses</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># prévisions, la commande précédente est équivalent à : </span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">create_param_file</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir_file_param =</span> export_dir,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">policy =</span> <span class="st">"lastoutliers"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">matrix_item =</span> <span class="fu">c</span>(<span class="st">"likelihood.aic"</span>, <span class="st">"likelihood.aicc"</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"likelihood.bic"</span>, <span class="st">"likelihood.bicc"</span>),</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">tsmatrix_series =</span> <span class="fu">c</span>(<span class="st">"sa"</span>, <span class="st">"sa_f"</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Les fichiers de paramètres peuvent être lus avec <code>read_param_file()</code> qui renvoie une liste qui peut être modifiée et exportée avec <code>list2param_file()</code> :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>param_f <span class="ot">&lt;-</span> <span class="fu">read_param_file</span>(<span class="fu">file.path</span>(export_dir, <span class="st">"parameters.param"</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(param_f)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 7
+ $ config         :List of 8
+  ..$ bundle              : chr "10000"
+  ..$ csv_layout          : chr "list"
+  ..$ csv_separator       : chr ";"
+  ..$ ndecs               : chr "6"
+  ..$ full_series_name    : logi TRUE
+  ..$ short_column_headers: logi TRUE
+  ..$ rslt_name_level     : chr "2"
+  ..$ format              : chr "JD3"
+ $ policy         : chr "lastoutliers"
+ $ refreshall     : logi TRUE
+ $ output         : NULL
+ $ matrix_item    : chr [1:4] "likelihood.aic" "likelihood.aicc" "likelihood.bic" "likelihood.bicc"
+ $ tsmatrix_series: chr [1:2] "sa" "sa_f"
+ $ paths_path     : NULL</code></pre>
+</div>
+</div>
+<p>Les fichiers de paramètres par défaut peuvent être obtenus avec la fonction <code>default_param_file()</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Utiliser la fonction <code>create_param_file()</code> pour créé un fichier de paramètres permettant de mettre à jour un workspace :</p>
+<ul>
+<li>En réestimant le modèle ARIMA, les outliers et les autres paramètres du modèle de régression et en re-identifiant les outliers uniquement sur la dernière année.</li>
+<li>En exportant la statistique M7, la statistique Q-M2 et les tests de jours ouvrables résiduels ;</li>
+<li>En exportant la série brute, la série désaisonnalisée et la tendance (de manière verticale).</li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Indice
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Pour voir les noms des paramètres, utiliser la fonction <code>default_param_file()</code> ou bien aller sur la page <a href="https://github.com/jdemetra/jwsacruncher/wiki/Output-dictionaries" class="uri">https://github.com/jdemetra/jwsacruncher/wiki/Output-dictionaries</a>.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dir <span class="ot">&lt;-</span> <span class="fu">tempdir</span>()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">create_param_file</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">dir_file_param =</span> dir,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">policy =</span> <span class="st">"lastoutliers"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">matrix_item =</span> <span class="fu">c</span>(</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"m-statistics.m7"</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"m-statistics.q-m2"</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"diagnostics.residual trading days tests.f-test on sa (td):2"</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"diagnostics.residual trading days tests.f-test on i (td):2"</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">tsmatrix_series =</span> <span class="fu">c</span>(<span class="st">"y"</span>, <span class="st">"sa"</span>, <span class="st">"t"</span>),</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">csv_layout =</span> <span class="st">"vtable"</span> </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>Les fichiers de paramètres peuvent être lus avec <code>read_param_file()</code> qui renvoie une liste qui peut être modifiée et exportée avec <code>list2param_file()</code> :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>param_f <span class="ot">&lt;-</span> <span class="fu">read_param_file</span>(<span class="fu">file.path</span>(dir, <span class="st">"parameters.param"</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(param_f)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>List of 7
+ $ config         :List of 8
+  ..$ bundle              : chr "10000"
+  ..$ csv_layout          : chr "vtable"
+  ..$ csv_separator       : chr ";"
+  ..$ ndecs               : chr "6"
+  ..$ full_series_name    : logi TRUE
+  ..$ short_column_headers: logi TRUE
+  ..$ rslt_name_level     : chr "2"
+  ..$ format              : chr "JD3"
+ $ policy         : chr "lastoutliers"
+ $ refreshall     : logi TRUE
+ $ output         : NULL
+ $ matrix_item    : chr [1:4] "m-statistics.m7" "m-statistics.q-m2" "diagnostics.residual trading days tests.f-test on sa (td):2" "diagnostics.residual trading days tests.f-test on i (td):2"
+ $ tsmatrix_series: chr [1:3] "y" "sa" "t"
+ $ paths_path     : NULL</code></pre>
+</div>
+</div>
+<p>Les fichiers de paramètres par défaut peuvent être obtenus avec la fonction <code>default_param_file()</code>.</p>
+</section>
+<section id="lancement-du-jwsacruncher" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="lancement-du-jwsacruncher"><span class="header-section-number">1.2.2</span> Lancement du JWSACruncher</h3>
+<p>Pour lancer le JWSACruncher avec <code>cruncher()</code> ou <code>cruncher_and_param()</code>, il faut spécifier le chemin d’accès au dossier contenant le JWSACruncher (paramètre <code>cruncher_bin_directory</code>) ainsi que celui du workspace à traiter (paramètre <code>workspace</code>). Si cela a déjà été fait dans la <a href="#sec-installation" class="quarto-xref">section&nbsp;1.1</a>, ne pas prendre en compte le paragraphe suivant</p>
+<p>Par défaut, le chemin d’accès au dossier du JWSACruncher est celui contenu dans le paramètre <code>cruncher_bin_directory</code> : il suffit donc de modifier une seule fois cette option afin qu’elle s’applique à toutes les exécutions du JWSACruncher. Le chemin à indiquer est celui du dossier contenant le fichier <em>jwsacruncher.bat</em>, situé dans le dossier “Bin” du dossier d’installation du JWSACruncher. Ainsi, s’il a été installé sous <code>D:\jdemetra-cli-2.2.4</code>, le fichier <em>jwsacruncher.bat</em> sera présent sous <code>D:\jdemetra-cli-2.2.4\bin</code>. Il faut donc modifier l’option <code>cruncher_bin_directory</code> de la façon suivante :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">cruncher_bin_directory =</span> <span class="st">"D:/jdemetra-cli-2.2.4/bin/"</span>)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si aucun chemin de workspace n’est renseigné, une fenêtre s’ouvre, invitant à sélectionner le workspace sur lequel on souhaite lancer le JWSACruncher.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remplacer ici "workspace.xml" par le chemin vers votre workspace</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cruncher</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">workspace =</span> <span class="st">"workspace.xml"</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remplacer ici "parameters.param" par le chemin vers votre fichier de paramètres</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">param_file_path =</span> <span class="st">"parameters.param"</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si vous n’avez pas de workspace vous pouvez utiliser le code suivant pour en générer un :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RJDemetra)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>spec_x13 <span class="ot">&lt;-</span> <span class="fu">x13_spec</span>(<span class="at">spec =</span> <span class="st">"RSA5c"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>jws <span class="ot">&lt;-</span> <span class="fu">new_workspace</span>()</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">new_multiprocessing</span>(jws, <span class="st">"sa1"</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (nom_series <span class="cf">in</span> <span class="fu">colnames</span>(ipi_c_eu)){</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    model <span class="ot">&lt;-</span> <span class="fu">jx13</span>(ipi_c_eu[,nom_series], spec_x13)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_sa_item</span>(jws, <span class="st">"sa1"</span>, model, nom_series)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="fu">save_workspace</span>(jws, <span class="st">"workspace.xml"</span>)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Si non spécifié dans le fichier des paramètres, les résultats sont exportés dans le sous dossier <code>"Output"</code> du workspace (pour le <code>workspace.xml</code>, les résultats seront donc sous <code>workspace/Output/</code>). On peut aussi créer le fichier des paramètres et lancer le JWSAcruncher avec la fonction <code>cruncher_and_param</code>. Cette fonction permet aussi de renommer les dossiers exportées avec les noms des multi-processings utilisés dans JDemetra+ (évite d’avoir des dossiers du type <code>SAProcessing-1</code>)<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cruncher_and_param</span>(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">workspace =</span> <span class="st">"workspace.xml"</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">policy =</span> <span class="st">"lastoutliers"</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">matrix_item =</span> <span class="fu">c</span>(</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">"m-statistics.m7"</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"m-statistics.q-m2"</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"diagnostics.residual trading days tests.f-test on sa (td):2"</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"diagnostics.residual trading days tests.f-test on i (td):2"</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">tsmatrix_series =</span> <span class="fu">c</span>(<span class="st">"y"</span>, <span class="st">"sa"</span>, <span class="st">"t"</span>),</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">csv_layout =</span> <span class="st">"vtable"</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="mise-à-jour-des-données-avec-la-version-3" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="mise-à-jour-des-données-avec-la-version-3"><span class="header-section-number">1.3</span> Mise à jour des données avec la version 3</h2>
+<p>Avec les packages de la version 3 vous pouvez également directement rafraîchir les spécifications depuis R, la chaîne de production peut donc être entièrement codée en R ! Par exemple, pour X-13ARIMA il faut utiliser la fonction <code>rjd3x13::x13_refresh()</code> :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> ipi_c_eu[,<span class="st">"FR"</span>]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>y_est <span class="ot">&lt;-</span> <span class="fu">window</span>(y, <span class="at">end =</span> <span class="dv">2019</span>)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> rjd3x13<span class="sc">::</span><span class="fu">x13</span>(y_est)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>mod<span class="sc">$</span>result<span class="sc">$</span>preprocessing</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Log-transformation: yes 
+SARIMA model: (2,1,1) (0,1,1)
+
+SARIMA coefficients:
+   phi(1)    phi(2)  theta(1) btheta(1) 
+ -0.01262   0.15483  -0.53470  -0.69469 
+
+Regression model:
+             td          easter LS (2008-11-01) LS (2009-01-01) AO (2011-05-01) 
+       0.006923       -0.022516       -0.085520       -0.072033        0.129229 
+
+For a more detailed output, use the 'summary()' function.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>spec_x13_ref <span class="ot">&lt;-</span> rjd3x13<span class="sc">::</span><span class="fu">x13_refresh</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Point spec: la specification de laquelle on part</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">spec =</span> mod<span class="sc">$</span>result_spec,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Domain spec: Specification utilisée pour l'estimation </span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># permet de définir les contraintes (CJO, valeurs possibles ARIMA...)</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">refspec =</span> mod<span class="sc">$</span>estimation_spec,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Politique de rafraîchissement</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">policy =</span> <span class="st">"Outliers"</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Période où les outliers sont figés :</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">period =</span> <span class="dv">12</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">start</span>(y_est),</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">end =</span> <span class="fu">end</span>(y_est) <span class="sc">-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>mod_ref <span class="ot">&lt;-</span> rjd3x13<span class="sc">::</span><span class="fu">x13</span>(y, spec_x13_ref)</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>mod_ref<span class="sc">$</span>result<span class="sc">$</span>preprocessing</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Log-transformation: yes 
+SARIMA model: (2,1,1) (0,1,1)
+
+SARIMA coefficients:
+   phi(1)    phi(2)  theta(1) btheta(1) 
+ -0.05028   0.12923  -0.56245  -0.70608 
+
+Regression model:
+             td          easter LS (2008-11-01) LS (2009-01-01) AO (2011-05-01) 
+       0.007047       -0.022698       -0.085281       -0.071688        0.129041 
+AO (2020-03-01) TC (2020-04-01) 
+      -0.204629       -0.423721 
+
+For a more detailed output, use the 'summary()' function.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Le modèle est différent de celui obtenu en réestimant</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># avec la spécification par défaut</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>rjd3x13<span class="sc">::</span><span class="fu">x13</span>(y)<span class="sc">$</span>result<span class="sc">$</span>preprocessing</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Log-transformation: no 
+SARIMA model: (2,1,1) (0,1,1)
+
+SARIMA coefficients:
+   phi(1)    phi(2)  theta(1) btheta(1) 
+  0.05291   0.18672  -0.52138  -0.66132 
+
+Regression model:
+             td              lp          easter LS (2008-11-01) LS (2009-01-01) 
+         0.6927          2.0903         -2.5476         -9.2744         -7.2838 
+AO (2011-05-01) AO (2020-03-01) TC (2020-04-01) 
+        13.1870        -21.1492        -35.6481 
+
+For a more detailed output, use the 'summary()' function.</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-rjd3" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Mise à jour des metadonnées avec <code>rjd3workspace</code></h1>
+<p>Lorsque l’on manipule des workspace depuis R, plusieurs informations sont perdues, lors de l’export, par rapport à JDemetra+, dont :</p>
+<ul>
+<li><p>le lien vers les données d’origine ;</p></li>
+<li><p>les éventuels commentaires que l’on peut faire.</p></li>
+</ul>
+<p>Toutes ces informations sont les <strong>metadata</strong>. Lorsque vous créer un workspace depuis JDemetra+, vous pouvez par exemple voir ces données en ouvrant le fichier <code>SAProcessing/SAProcessing-1.xml</code> associé au dossier de votre workspace. Dans l’exemple ci-dessous, dans les premières lignes de ce fichier Excel on peut voir les données utilisées, le nom de la série et dans la partie “metaData” le chemin vers le fichier Excel contenant les données :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>item name<span class="op">=</span><span class="ot">"sa1"</span><span class="op">&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>        <span class="op">&lt;</span>subset<span class="op">&gt;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>            <span class="op">&lt;</span>item name<span class="op">=</span><span class="ot">"ts"</span><span class="op">&gt;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                <span class="op">&lt;</span>ts name<span class="op">=</span><span class="ot">"IPI&amp;#10;BE"</span><span class="op">&gt;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span>freq<span class="op">&gt;</span><span class="dv">12</span><span class="op">&lt;/</span>freq<span class="op">&gt;</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span>firstYear<span class="op">&gt;</span><span class="dv">2000</span><span class="op">&lt;/</span>firstYear<span class="op">&gt;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span>firstPeriod<span class="op">&gt;</span><span class="dv">1</span><span class="op">&lt;/</span>firstPeriod<span class="op">&gt;</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span><span class="kw">data</span><span class="op">&gt;..</span>.<span class="op">&lt;/</span><span class="kw">data</span><span class="op">&gt;</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span>metaData<span class="op">&gt;</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>                        <span class="op">&lt;</span>property name<span class="op">=</span><span class="ot">"@timestamp"</span> <span class="fu">value</span><span class="op">=</span><span class="ot">"Sun Oct 08 17:19:31 CEST 2023"</span><span class="op">/&gt;</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>                        <span class="op">&lt;</span>property name<span class="op">=</span><span class="ot">"@source"</span> <span class="fu">value</span><span class="op">=</span><span class="ot">"XCLPRVDR"</span><span class="op">/&gt;</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>                        <span class="op">&lt;</span>property name<span class="op">=</span><span class="ot">"@id"</span> <span class="fu">value</span><span class="op">=</span><span class="ot">"demetra://tsprovider/XCLPRVDR/20111201/SERIES?file=%2FUsers%2Falainquartierlatente%2FDesktop%2Fdata.xlsx#seriesName=BE&amp;amp;sheetName=IPI"</span><span class="op">/&gt;</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;/</span>metaData<span class="op">&gt;</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>                <span class="op">&lt;/</span>ts<span class="op">&gt;</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>            <span class="op">&lt;/</span>item<span class="op">&gt;</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">....</span></span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Dans <code>rjd3workspace</code> il existe différentes fonctions pour modifier les métadonnées des SAItems : <code>rjd3workspace::set_comment()</code>, <code>rjd3workspace::set_context()</code>, <code>rjd3workspace::set_domain_specification()</code>, <code>rjd3workspace::set_name()</code>, <code>rjd3workspace::set_priority()</code>, <code>rjd3workspace::set_raw_data()</code>, <code>rjd3workspace::set_specification()</code>, <code>rjd3workspace::set_ts_metadata()</code>, <code>rjd3workspace::put_ts_metadata()</code>, <code>rjd3workspace::set_ts()</code>. Le package <code>rjd3providers</code> permet également, grâce à <code>rjd3workspace</code>, de mettre à jour les providers depuis R (i.e.&nbsp;: les chemins vers les données).</p>
+<p>Les informations sur les metadata associés à la série temporelle peut être lue en utilisant la fonction <code>get_ts()</code> :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>jws_prod <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jws_open</span>(<span class="fu">file.path</span>(dir_dl, <span class="st">"macronia.xml"</span>))</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>jsa1 <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jsap_sai</span>(rjd3workspace<span class="sc">::</span><span class="fu">jws_sap</span>(jws_prod, <span class="dv">1</span>), <span class="dv">1</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">get_ts</span>(jsa1)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>] <span class="co"># 4e élément est la série brute </span></span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$name
+[1] "IPI\nBE"
+
+$moniker
+$source
+[1] ""
+
+$id
+[1] "310d3df6-4cc1-40b4-a197-ed8250b66083"
+
+attr(,"class")
+[1] "JD3_TSMONIKER"
+
+$metadata
+$metadata$`@timestamp`
+[1] "Tue Aug 12 11:03:11 CEST 2025"
+
+$metadata$`@source`
+[1] "XCLPRVDR"
+
+$metadata$`@id`
+[1] "demetra://tsprovider/XCLPRVDR/20111201/SERIES?file=%2FUsers%2Falainquartierlatente%2FDesktop%2FFMI%2F2025-08-Senegal%2Fatelier.cvs.2025%2Fdata%2Fmacronia.xlsx#seriesName=BE&amp;sheetName=IPI"</code></pre>
+</div>
+</div>
+<p>Et si l’on crée maintenant un nouveau workspace à partir des données de <code>macronia.xml</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>jws_prod_tmp <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jws_new</span>()</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i_sap <span class="cf">in</span> <span class="fu">seq_len</span>(rjd3workspace<span class="sc">::</span><span class="fu">ws_sap_count</span>(jws_prod))) {</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Pour chaque SAProcessing on crée un nouveau SAProcessing</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  jsap_ws_prod <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jws_sap</span>(jws_prod, i_sap)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  jsap_ws_prod_tmp <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jws_sap_new</span>(jws_prod_tmp, rjd3workspace<span class="sc">::</span><span class="fu">sap_name</span>(jsap_ws_prod))</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i_sai <span class="cf">in</span> <span class="fu">seq_len</span>(rjd3workspace<span class="sc">::</span><span class="fu">sap_sai_count</span>(jsap_ws_prod))) {</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">#  Pour chaque SAItem on crée modèle avec la spécification RSAA</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    jsai <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jsap_sai</span>(jsap_ws_prod, i_sai)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    rjd3workspace<span class="sc">::</span><span class="fu">add_sa_item</span>(</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>      jsap_ws_prod_tmp,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">name =</span> rjd3workspace<span class="sc">::</span><span class="fu">sai_name</span>(jsai),</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> rjd3x13<span class="sc">::</span><span class="fu">x13</span>(</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># On récupère la série brute</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>        rjd3workspace<span class="sc">::</span><span class="fu">get_raw_data</span>(jsai),</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">spec =</span> <span class="st">"RSA1"</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">save_workspace</span>(jws_prod_tmp, <span class="fu">file.path</span>(dir_dl, <span class="st">"macronia_tmp.xml"</span>), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>jsa1_tmp <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jsap_sai</span>(rjd3workspace<span class="sc">::</span><span class="fu">jws_sap</span>(jws_prod_tmp, <span class="dv">1</span>), <span class="dv">1</span>)</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">get_ts</span>(jsa1_tmp)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$name
+[1] "IPI\nBE"
+
+$moniker
+$source
+[1] ""
+
+$id
+[1] "256dc6c7-5479-4449-a7ec-9c0a3fa53dca"
+
+attr(,"class")
+[1] "JD3_TSMONIKER"
+
+$metadata
+NULL</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>En utilisant la fonction <code>rjd3workspace::set_ts_metadata()</code>, reproduire la fonction <code>rjdworkspace::update_metadata_roughly()</code>. Il faut pour cela parcourir tous les SAProcessing et tous les SAItems avec les fonctions vues dans les précédents TP. Vérifier le résultat.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>update_metadata_roughly2 <span class="ot">&lt;-</span> <span class="cf">function</span>(jws1, jws2) {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i_mp <span class="cf">in</span> <span class="fu">seq_len</span>(rjd3workspace<span class="sc">::</span><span class="fu">ws_sap_count</span>(jws1))) {</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>        jmp_ws1 <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jws_sap</span>(jws1, i_mp)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>        jmp_ws2 <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jws_sap</span>(jws2, i_mp)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (i_sa <span class="cf">in</span> <span class="fu">seq_len</span>(rjd3workspace<span class="sc">::</span><span class="fu">sap_sai_count</span>(jmp_ws1))) {</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>            rjd3workspace<span class="sc">::</span><span class="fu">set_ts_metadata</span>(jmp_ws2, i_sa,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>                                        rjd3workspace<span class="sc">::</span><span class="fu">jsap_sai</span>(jmp_ws1, i_sa))</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">invisible</span>(<span class="cn">TRUE</span>))</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="fu">update_metadata_roughly2</span>(</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  jws_prod,</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>  jws_prod_tmp</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>jsa1_tmp <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jsap_sai</span>(rjd3workspace<span class="sc">::</span><span class="fu">jws_sap</span>(jws_prod_tmp, <span class="dv">1</span>), <span class="dv">1</span>)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">get_ts</span>(jsa1_tmp)[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$name
+[1] "IPI\nBE"
+
+$moniker
+$source
+[1] ""
+
+$id
+[1] "310d3df6-4cc1-40b4-a197-ed8250b66083"
+
+attr(,"class")
+[1] "JD3_TSMONIKER"
+
+$metadata
+$metadata$`@timestamp`
+[1] "Tue Aug 12 11:03:11 CEST 2025"
+
+$metadata$`@source`
+[1] "XCLPRVDR"
+
+$metadata$`@id`
+[1] "demetra://tsprovider/XCLPRVDR/20111201/SERIES?file=%2FUsers%2Falainquartierlatente%2FDesktop%2FFMI%2F2025-08-Senegal%2Fatelier.cvs.2025%2Fdata%2Fmacronia.xlsx#seriesName=BE&amp;sheetName=IPI"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Comme vous le remarquez, le chemin absolu vers les données est inscrit dans le workspace. Si vous lancer le JWSACruncher sur ce workspace vous devriez avoir une erreur puisque le fichier n’est pas au même endroit chez vous ! Ce fichier est dans l’archive <a href="../data/macronia.zip">macronia.zip</a>. Le chemin peut également être mis à jour grâce à <code>rjd3providers</code> :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>jsap <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jws_sap</span>(jws_prod_tmp, <span class="dv">1</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>jsa <span class="ot">&lt;-</span>  rjd3workspace<span class="sc">::</span><span class="fu">jsap_sai</span>(jsap, <span class="dv">1</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Il faut changer le paramètre @id</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">get_ts</span>(jsa)<span class="sc">$</span>metadata</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$`@timestamp`
+[1] "Tue Aug 12 11:03:11 CEST 2025"
+
+$`@source`
+[1] "XCLPRVDR"
+
+$`@id`
+[1] "demetra://tsprovider/XCLPRVDR/20111201/SERIES?file=%2FUsers%2Falainquartierlatente%2FDesktop%2FFMI%2F2025-08-Senegal%2Fatelier.cvs.2025%2Fdata%2Fmacronia.xlsx#seriesName=BE&amp;sheetName=IPI"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On extrait l'objet java</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>jsa_id <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">get_ts_metadata</span>(jsa, <span class="st">"@id"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>full_path_f <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">normalizePath</span>(<span class="fu">file.path</span>(dir_dl, <span class="st">"macronia.xlsx"</span>))</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>nid <span class="ot">&lt;-</span> rjd3providers<span class="sc">::</span><span class="fu">spreadsheet_change_file</span>(jsa_id,</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                                              full_path_f)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">put_ts_metadata</span>(jsap, <span class="dv">1</span>, <span class="st">"@id"</span>, nid)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>jsa <span class="ot">&lt;-</span>  rjd3workspace<span class="sc">::</span><span class="fu">jsap_sai</span>(jsap, <span class="dv">1</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">get_ts</span>(jsa)<span class="sc">$</span>metadata</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$`@timestamp`
+[1] "Tue Aug 12 11:03:11 CEST 2025"
+
+$`@id`
+[1] "demetra://tsprovider/XCLPRVDR/20111201/SERIES?file=%2FUsers%2Falainquartierlatente%2FDesktop%2FFMI%2F2025-08-Senegal%2Fatelier.cvs.2025%2FTP%2Fmacronia.xlsx#seriesName=BE&amp;sheetName=IPI"
+
+$`@source`
+[1] "XCLPRVDR"</code></pre>
+</div>
+</div>
+<p>On peut aussi passer d’un fichier Excel à un fichier CSV :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>jsap <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jws_sap</span>(jws_prod_tmp, <span class="dv">1</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>i_serie <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>jsa <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">jsap_sai</span>(jsap, i_serie)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>name_series <span class="ot">&lt;-</span> rjd3workspace<span class="sc">::</span><span class="fu">sai_name</span>(jsa)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>name_series</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "IPI\nC1"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># On importe le fichier CSV :</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>full_path_f <span class="ot">&lt;-</span> base<span class="sc">::</span><span class="fu">normalizePath</span>(<span class="fu">file.path</span>(dir_dl, <span class="st">"macronia_ipi.csv"</span>))</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>txt_data <span class="ot">&lt;-</span> rjd3providers<span class="sc">::</span><span class="fu">txt_series</span>(</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    full_path_f, <span class="at">series =</span> <span class="dv">1</span>, </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">delimiter =</span> <span class="st">"SEMICOLON"</span>, <span class="co"># Séparateur point virgule</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">txtQualifier =</span> <span class="st">"DOUBLE_QUOTE"</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="do">## Si données manquantes : </span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gathering.includeMissing = FALSE, </span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gathering.period = 12</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">get_ts</span>(jsa)<span class="sc">$</span>metadata</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$`@timestamp`
+[1] "Tue Aug 12 11:03:11 CEST 2025"
+
+$`@source`
+[1] "XCLPRVDR"
+
+$`@id`
+[1] "demetra://tsprovider/XCLPRVDR/20111201/SERIES?file=%2FUsers%2Falainquartierlatente%2FDesktop%2FFMI%2F2025-08-Senegal%2Fatelier.cvs.2025%2Fdata%2Fmacronia.xlsx#seriesName=C1&amp;sheetName=IPI"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">put_ts_metadata</span>(jsap, i_serie, <span class="st">"@source"</span>, txt_data<span class="sc">$</span>moniker<span class="sc">$</span>source)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">put_ts_metadata</span>(jsap, i_serie, <span class="st">"@id"</span>, txt_data<span class="sc">$</span>moniker<span class="sc">$</span>id)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>jsa <span class="ot">&lt;-</span>  rjd3workspace<span class="sc">::</span><span class="fu">jsap_sai</span>(jsap, <span class="dv">2</span>)</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>rjd3workspace<span class="sc">::</span><span class="fu">get_ts</span>(jsa)<span class="sc">$</span>metadata</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$`@timestamp`
+[1] "Tue Aug 12 11:03:11 CEST 2025"
+
+$`@id`
+[1] "demetra://tsprovider/Txt/20111201/SERIES?cleanMissing=false&amp;datePattern=&amp;delimiter=SEMICOLON&amp;file=%2FUsers%2Falainquartierlatente%2FDesktop%2FFMI%2F2025-08-Senegal%2Fatelier.cvs.2025%2FTP%2Fmacronia_ipi.csv&amp;ignoreNumberGrouping=true&amp;locale=&amp;textQualifier=DOUBLE_QUOTE#seriesIndex=0"
+
+$`@source`
+[1] "Txt"</code></pre>
+</div>
+</div>
+</section>
+<section id="sec-rjdworkspace" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Mise à jour des metadonnées avec <code>rjdworkspace</code></h1>
+<p>Lorsque l’on manipule des objets depuis RJDemetra, plusieurs informations sont perdues par rapport à JDemetra+, dont :</p>
+<ul>
+<li><p>le lien vers les données d’origine ;</p></li>
+<li><p>les éventuels commentaires que l’on peut faire.</p></li>
+</ul>
+<p>Toutes ces informations sont les <strong>metadata</strong>. Lorsque vous créer un workspace depuis JDemetra+, vous pouvez par exemple voir ces données en ouvrant le fichier <code>SAProcessing/SAProcessing-1.xml</code> associé au dossier de votre workspace. Dans l’exemple ci-dessous, dans les premières lignes de ce fichier Excel on peut voir les données utilisées, le nom de la série et dans la partie “metaData” le chemin vers le fichier Excel contenant les données :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>item name<span class="op">=</span><span class="ot">"sa1"</span><span class="op">&gt;</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>        <span class="op">&lt;</span>subset<span class="op">&gt;</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>            <span class="op">&lt;</span>item name<span class="op">=</span><span class="ot">"ts"</span><span class="op">&gt;</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                <span class="op">&lt;</span>ts name<span class="op">=</span><span class="ot">"IPI&amp;#10;BE"</span><span class="op">&gt;</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span>freq<span class="op">&gt;</span><span class="dv">12</span><span class="op">&lt;/</span>freq<span class="op">&gt;</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span>firstYear<span class="op">&gt;</span><span class="dv">2000</span><span class="op">&lt;/</span>firstYear<span class="op">&gt;</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span>firstPeriod<span class="op">&gt;</span><span class="dv">1</span><span class="op">&lt;/</span>firstPeriod<span class="op">&gt;</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span><span class="kw">data</span><span class="op">&gt;..</span>.<span class="op">&lt;/</span><span class="kw">data</span><span class="op">&gt;</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;</span>metaData<span class="op">&gt;</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>                        <span class="op">&lt;</span>property name<span class="op">=</span><span class="ot">"@timestamp"</span> <span class="fu">value</span><span class="op">=</span><span class="ot">"Sun Oct 08 17:19:31 CEST 2023"</span><span class="op">/&gt;</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>                        <span class="op">&lt;</span>property name<span class="op">=</span><span class="ot">"@source"</span> <span class="fu">value</span><span class="op">=</span><span class="ot">"XCLPRVDR"</span><span class="op">/&gt;</span></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>                        <span class="op">&lt;</span>property name<span class="op">=</span><span class="ot">"@id"</span> <span class="fu">value</span><span class="op">=</span><span class="ot">"demetra://tsprovider/XCLPRVDR/20111201/SERIES?file=%2FUsers%2Falainquartierlatente%2FDesktop%2Fdata.xlsx#seriesName=BE&amp;amp;sheetName=IPI"</span><span class="op">/&gt;</span></span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>                    <span class="op">&lt;/</span>metaData<span class="op">&gt;</span></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>                <span class="op">&lt;/</span>ts<span class="op">&gt;</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>            <span class="op">&lt;/</span>item<span class="op">&gt;</span></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">....</span></span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Supposons que ce soit le workspace utilisé en production (i.e.&nbsp;: le workspace sur lequel vous lancez <code>rjwsacruncher</code>). On va se placer dans le cas où l’on souhaite modifier ce workspace depuis R. On repartira du workspace <code>macronia_v2.xml</code> qui est dans le <code>.zip</code> disponible sous <a href="data/macronia.zip">/data/macronia.zip</a>. Pour le télécharger depuis R :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>dir_dl <span class="ot">&lt;-</span> <span class="st">"."</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="st">"https://AQLT.github.io/atelier.cvs.2025/data/macronia.zip"</span>,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>              <span class="fu">file.path</span>(dir_dl, <span class="st">"macronia.zip"</span>))</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(<span class="fu">file.path</span>(dir_dl, <span class="st">"macronia.zip"</span>),</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">exdir =</span> dir_dl)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Créer un nouveau workspace <code>macronia_tmp.xml</code> où l’on a modifié toutes les spécifications de votre workspace en rajoutant un AO en janvier 2020.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RJDemetra)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Chargement du workspace</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>jws <span class="ot">&lt;-</span> <span class="fu">load_workspace</span>(<span class="fu">file.path</span>(dir_dl, <span class="st">"macronia.xml"</span>))</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">compute</span>(jws)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Import de tous les modèles</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co"># On a une liste qui contient autant d'éléments que de multiprocessings</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># et chaque élément est une liste qui contient autant d'éléments que de modèle</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a><span class="co"># dans le multiprocessing considéré</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>all_models <span class="ot">&lt;-</span> <span class="fu">get_model</span>(jws, <span class="at">progress_bar =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>jws2 <span class="ot">&lt;-</span> <span class="fu">new_workspace</span>()</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(sa_name <span class="cf">in</span> <span class="fu">names</span>(all_models)){</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">new_multiprocessing</span>(jws2, sa_name)</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (series_name <span class="cf">in</span> <span class="fu">names</span>(all_models[[sa_name]])){</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>        new_spec <span class="ot">&lt;-</span> <span class="fu">x13_spec</span>(all_models[[sa_name]][[series_name]],</span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>                             <span class="at">usrdef.outliersEnabled =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>                             <span class="at">usrdef.outliersType =</span> <span class="fu">c</span>(<span class="st">"AO"</span>),</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>                             <span class="at">usrdef.outliersDate =</span> <span class="fu">c</span>(<span class="st">"2020-01-01"</span>))</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>        new_jmod <span class="ot">&lt;-</span> <span class="fu">jx13</span>(<span class="fu">get_ts</span>(all_models[[sa_name]][[series_name]]),</span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>                         new_spec)</span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">add_sa_item</span>(<span class="at">workspace =</span> jws2, <span class="at">multiprocessing =</span> sa_name,</span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>                    <span class="at">sa_obj =</span> new_jmod,</span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>                    <span class="at">name =</span> series_name)</span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a><span class="fu">save_workspace</span>(jws2, <span class="fu">file.path</span>(dir_dl, <span class="st">"macronia_tmp.xml"</span>))</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>Si vous ouvrez maintenant le fichier <code>macronia_tmp/SAProcessing/SAProcessing-1.xml</code> vous remarquez donc qu’il n’y a plus les parties <code>metaData</code> !</p>
+<p>Pour les mettre à jour il existe deux fonctions dans <code>rjdworkspace</code> :</p>
+<ol type="1">
+<li><p><code>update_medata</code> qui, à partir d’un workspace de référence, met à jour un workspace (<code>macronia_tmp.xml</code>) en faisant un matching sur le nom des séries (il y a donc potentiellement un problème si on a plusieurs séries avec le même nom)</p></li>
+<li><p><code>update_metadata_roughly()</code>, à partir d’un workspace de référence, met à jour un workspace (<code>macronia_tmp.xml</code>) en fonction de l’ordre de la série dans le modèle (le premier modèle de <code>macronia_tmp.xml</code> est mis à jour avec les informations du premier modèle de l’autre workspace, etc.).</p></li>
+</ol>
+<p>Dans notre cas, <code>update_metadata_roughly()</code> suffit :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjdworkspace)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'rjdworkspace' was built under R version 4.4.1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>jws3 <span class="ot">&lt;-</span> <span class="fu">update_metadata_roughly</span>(</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>    jws, <span class="co"># D'abord le workspace qui contient les metadata </span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    jws2 <span class="co"># Ensuite le workspace à mettre à jour</span></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Il reste à sauvegarder le nouveau workspace</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">save_workspace</span>(jws3, <span class="fu">file.path</span>(dir_dl, <span class="st">"macronia_tmp2.xml"</span>))</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="améliorer-le-suivi-de-la-production" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Améliorer le suivi de la production</h1>
+<p>Lors de la production courante, on a généralement peu de temps pour étudier tous les modèles de désaisonnalisation. <i class="fa-brands fa-r-project" aria-label="r-project"></i> peut grandement vous aider, en faisant des graphiques automatiques, des rapports, des tableaux de bord…</p>
+<p>Plusieurs packages peuvent vous aider à faire cela dont :</p>
+<ul>
+<li><p><a href="https://github.com/AQLT/ggdemetra">ggdemetra</a> pour créer facilement des graphiques ggplot2 à partir des modèles de RJDemetra ;</p></li>
+<li><p><a href="https://github.com/AQLT/rjdqa">rjdqa</a> pour créer des tableaux de bord ;</p></li>
+<li><p><a href="https://github.com/AQLT/rjdmarkdown">rjdmarkdown</a> pour un meilleur rendu avec rmarkdown des modèles de RJDemetra.</p></li>
+</ul>
+<p>Pour les packages liés à la version 3 :</p>
+<ul>
+<li><p><a href="https://github.com/AQLT/ggdemetra3">ggdemetra3</a></p></li>
+<li><p><a href="https://github.com/AQLT/rjd3report">rjd3report</a> : devrait rassembler <code>rjdqa</code> et <code>rjdmarkdown</code> (pour l’instant il n’y a que <code>rjd3report::simple_dashboard()</code>).</p></li>
+</ul>
+<section id="ggdemetra" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="ggdemetra"><span class="header-section-number">4.1</span> ggdemetra</h2>
+<p><a href="https://github.com/AQLT/ggdemetra">ggdemetra</a> permet de faire de la désaisonnalisation comme une couche supplémentaire de ggplot2.</p>
+<ul>
+<li><code>geom_sa()</code> : pour ajouter une série temporelle associée à la désaisonnalisation (tendance, série désaisonnalisée, etc.) ;</li>
+<li><code>geom_outlier()</code> : pour ajouter les points atypiques corrigés dans le pre-ajustement ;</li>
+<li><code>geom_arima()</code> : pour ajouter le modèle ARIMA ;</li>
+<li><code>geom_diagnostics()</code> : pour ajouter un tableau avec des diagnostics.</li>
+</ul>
+<p>Par exemple, pour tracer les séries désaisonnalisées d’un ensemble de séries temporelles :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdemetra)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>dataGraph <span class="ot">&lt;-</span> <span class="fu">ts2df</span>(<span class="fu">na.omit</span>(ipi_c_eu[,<span class="fu">c</span>(<span class="st">"FR"</span>, <span class="st">"UK"</span>, <span class="st">"IT"</span>)]))</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>dataGraph <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(dataGraph, <span class="at">id =</span> <span class="st">"date"</span>)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> dataGraph, <span class="fu">aes</span> (<span class="at">x =</span> date, <span class="at">y =</span> value, <span class="at">color =</span> variable)) <span class="sc">+</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"sa"</span>, <span class="at">frequency =</span> <span class="dv">12</span>, <span class="at">spec =</span> <span class="fu">x13_spec</span>(<span class="st">"RSA4c"</span>))</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-multiplot" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-multiplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="R_5_JD_in_production_files/figure-html/fig-multiplot-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-multiplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Désaisonnalisation de plusieurs séries avec <code>ggplot2</code> grâce à <code>ggdemetra</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Si vous avez déjà estimé un modèle avec RJDemetra, vous pouvez directement initialiser votre graphique grâce à la fonction <code>init_ggplot</code> :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">x13</span>(<span class="fu">window</span>(ipi_c_eu[,<span class="st">"FR"</span>], <span class="at">end =</span> <span class="dv">2019</span>))</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>diagnostics <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">`</span><span class="at">Combined test</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"diagnostics.combined.all.summary"</span>,</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">`</span><span class="at">Residual qs-test (p-value)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"diagnostics.qs"</span>,</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">`</span><span class="at">Residual f-test (p-value)</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"diagnostics.ftest"</span>)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>p_sa <span class="ot">&lt;-</span> <span class="fu">init_ggplot</span>(mod) <span class="sc">+</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>(<span class="at">color =</span>  <span class="st">"#F0B400"</span>) <span class="sc">+</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"y_f"</span>, <span class="at">linetype =</span> <span class="dv">2</span>,</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span>  <span class="st">"#F0B400"</span>) <span class="sc">+</span> </span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"sa"</span>, <span class="at">color =</span> <span class="st">"#155692"</span>) <span class="sc">+</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"sa_f"</span>, <span class="at">color =</span> <span class="st">"#155692"</span>, <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_outlier</span>(<span class="at">geom =</span> <span class="st">"label_repel"</span>,</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>                 <span class="at">coefficients =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>                 <span class="at">ylim =</span> <span class="fu">c</span>(<span class="cn">NA</span>, <span class="dv">65</span>), </span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>                 <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.03</span>, <span class="st">"npc"</span>),</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>                              <span class="at">type =</span> <span class="st">"closed"</span>, <span class="at">ends =</span> <span class="st">"last"</span>),</span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">digits =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_arima</span>(<span class="at">geom =</span> <span class="st">"label"</span>,</span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>               <span class="at">x_arima =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">y_arima =</span> <span class="cn">Inf</span>, </span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>               <span class="at">vjust =</span> <span class="fl">1.2</span>, <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.1</span>)</span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>p_sa <span class="sc">+</span>   </span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_diagnostics</span>(<span class="at">diagnostics =</span> diagnostics,</span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>                     <span class="at">table_theme =</span> gridExtra<span class="sc">::</span><span class="fu">ttheme_default</span>(<span class="at">base_size =</span> <span class="dv">6</span>),</span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>                     <span class="at">ymin =</span> <span class="dv">115</span>, <span class="at">ymax =</span> <span class="dv">130</span>, <span class="at">xmin =</span> <span class="dv">2010</span>,</span>
+<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>                     <span class="at">message =</span> <span class="cn">FALSE</span>)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-ggdemetra-ex" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ggdemetra-ex-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="R_5_JD_in_production_files/figure-html/fig-ggdemetra-ex-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ggdemetra-ex-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Exemple des différentes fonctionnalités de <code>ggdemetra</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Pour combiner plusieurs graphiques on peut également utiliser le package patchwork :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: package 'patchwork' was built under R version 4.4.1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>p_diag <span class="ot">&lt;-</span> <span class="fu">init_ggplot</span>(mod)  <span class="sc">+</span> </span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_diagnostics</span>(<span class="at">diagnostics =</span> diagnostics,</span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">table_theme =</span> gridExtra<span class="sc">::</span><span class="fu">ttheme_default</span>(<span class="at">base_size =</span> <span class="dv">8</span>),</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">message =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_void</span>()</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>p_sa <span class="sc">/</span> p_diag <span class="sc">+</span> </span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="fl">1.5</span>), <span class="st">"null"</span>))</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-patchwork" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-patchwork-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="R_5_JD_in_production_files/figure-html/fig-patchwork-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-patchwork-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Combinaison de plusieurs graphiques de <code>ggdemetra</code> avec <code>patchwork</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>La fonction <code>ggsiratioplot()</code> permet de tracer les SI ratios avec ggplot2 :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsiratioplot</span>(mod)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-ggsiratioplot" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ggsiratioplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="R_5_JD_in_production_files/figure-html/fig-ggsiratioplot-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ggsiratioplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: S-I ratio avec <code>ggplot2</code> et <code>ggdemetra::ggsiratioplot()</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Les différentes composantes du modèle (ainsi que leurs prévisions) peuvent être facilement extraites via les fonctions <code>calendar()</code>, <code>calendaradj()</code>, <code>irregular()</code>, <code>trendcycle()</code>, <code>seasonal()</code>, <code>seasonaladj()</code>, <code>trendcycle()</code> and <code>raw()</code>.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Exercice
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Créer une fonction <code>graph_synthetique()</code> qui prend en paramètre un modèle de RJDemetra et qui fait deux graphiques :</p>
+<ul>
+<li><p>à gauche les séries brutes, désaisonnalisée et tendance sur les 10 dernières années ;</p></li>
+<li><p>à droite les SI-Ratio.</p></li>
+</ul>
+</div>
+</div>
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Indice
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Pour récupérer les 10 dernières années on pourra récupérer la dernière date connue avec la fonction <code>time()</code> et utiliser la fonction <code>ggplot2::coord_cartesian()</code> (à préférer à la fonction <code>ggplot2::xlim()</code> qui supprime des données et refait donc une désaisonnalisation sur une autre période).</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Solution
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>graph_synthetique <span class="ot">&lt;-</span> <span class="cf">function</span> (x, <span class="at">titre =</span> <span class="cn">NULL</span>) {</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    y <span class="ot">&lt;-</span> <span class="fu">raw</span>(x)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    last_date <span class="ot">&lt;-</span> <span class="fu">time</span>(y)[<span class="fu">length</span>(y)]</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>    p_sa <span class="ot">&lt;-</span> <span class="fu">init_ggplot</span>(x) <span class="sc">+</span></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_line</span>(<span class="at">color =</span> <span class="st">"#F0B400"</span>) <span class="sc">+</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"sa"</span>, <span class="at">color =</span> <span class="st">"#155692"</span>) <span class="sc">+</span></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"t"</span>, <span class="at">color =</span> <span class="st">"#1E6C0B"</span>) <span class="sc">+</span></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(last_date <span class="sc">-</span> <span class="dv">10</span>, <span class="cn">NA</span>)) <span class="sc">+</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># On change l'affichage de l'axe des abscisses</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> zoo<span class="sc">::</span>as.yearmon)</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    p_siratio <span class="ot">&lt;-</span> <span class="fu">ggsiratioplot</span>(x,</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>                               <span class="co"># supprime le titre</span></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>                               <span class="at">main =</span> <span class="cn">NULL</span>, </span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>                               <span class="at">start =</span> last_date <span class="sc">-</span> <span class="dv">10</span>) </span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>    ((p_sa <span class="sc">+</span> p_siratio) <span class="sc">&amp;</span></span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># on applique la fonction theme_bw à tous les graphiques</span></span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>            <span class="fu">theme_bw</span>()) <span class="sc">+</span></span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># On ajoute un titre global</span></span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plot_annotation</span>(</span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">title =</span> titre</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a><span class="fu">graph_synthetique</span>(mod)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-graph-synth" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-graph-synth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="R_5_JD_in_production_files/figure-html/fig-graph-synth-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-graph-synth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Exemple de tableau de bord grâce à <code>ggdemetra</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Ci-dessous un exemple de comparaison entre <code>ggplot2::xlim()</code> et <code>ggplot2::coord_cartesian()</code> :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>p_cc <span class="ot">&lt;-</span> <span class="fu">init_ggplot</span>(mod) <span class="sc">+</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"sa"</span>, <span class="at">color =</span> <span class="st">"#155692"</span>) <span class="sc">+</span></span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"t"</span>, <span class="at">color =</span> <span class="st">"#1E6C0B"</span>) <span class="sc">+</span></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_cartesian</span>(<span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">2010</span>, <span class="cn">NA</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">95</span>, <span class="dv">120</span>)) </span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>p_xlim <span class="ot">&lt;-</span> <span class="fu">init_ggplot</span>(mod) <span class="sc">+</span></span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"sa"</span>, <span class="at">color =</span> <span class="st">"#155692"</span>) <span class="sc">+</span></span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sa</span>(<span class="at">component =</span> <span class="st">"t"</span>, <span class="at">color =</span> <span class="st">"#1E6C0B"</span>) <span class="sc">+</span></span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">2010</span>, <span class="cn">NA</span>)) <span class="sc">+</span></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">coord_cartesian</span>(<span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">95</span>, <span class="dv">120</span>)) </span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>p_cc <span class="sc">/</span> p_xlim</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 240 rows containing non-finite outside the scale range
+(`stat_sa()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Frequency used: 12</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 240 rows containing non-finite outside the scale range
+(`stat_sa()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div id="fig-cc-xlim" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cc-xlim-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="R_5_JD_in_production_files/figure-html/fig-cc-xlim-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cc-xlim-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6: Comparaison des fonctions <code>ggplot2::xlim()</code> et <code>ggplot2::coord_cartesian()</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Un message et deux warnings sont générés : c’est parce que les données avant 2010 sont supprimées avec la fonction <code>xlim()</code> et qu’une nouvelle désaisonnalisation est alors effectuée (avec une spécification par défaut qui peut être différente de celle utilisée pour créer le modèle). Cela explique les différences entre les deux graphiques</p>
+</div>
+</div>
+</div>
+<p>À partir de la fonction précédente, on peut par exemple faire une fonction qui va lire un workspace et faire un cahier pdf le graphique précédent pour tous les modèles de chaque multiprocessing :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Construisons d'abord un workspace exemple :</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> ipi_c_eu[, <span class="st">"FR"</span>]</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>jws <span class="ot">&lt;-</span> <span class="fu">new_workspace</span>()</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="fu">new_multiprocessing</span>(jws, <span class="st">"X-13"</span>)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="fu">new_multiprocessing</span>(jws, <span class="st">"TRAMO-SEATS"</span>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (spec <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"RSA5c"</span>, <span class="st">"RSA0"</span>, <span class="st">"RSA1"</span>, <span class="st">"RSA2c"</span>, <span class="st">"RSA3"</span>, <span class="st">"RSA4c"</span>)) {</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_sa_item</span>(jws, <span class="st">"X-13"</span>, <span class="fu">jx13</span>(y, spec), spec)</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (spec <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"RSAfull"</span>, <span class="st">"RSA0"</span>, <span class="st">"RSA1"</span>, <span class="st">"RSA2"</span>, <span class="st">"RSA3"</span>, <span class="st">"RSA4"</span>, <span class="st">"RSA5"</span>)) {</span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">add_sa_item</span>(jws, <span class="st">"TRAMO-SEATS"</span>, <span class="fu">jtramoseats</span>(y, spec), spec)</span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>dir <span class="ot">&lt;-</span> <span class="fu">tempdir</span>()</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a><span class="fu">save_workspace</span>(jws, <span class="fu">file.path</span>(dir, <span class="st">"workspace.xml"</span>))</span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a>jws <span class="ot">&lt;-</span> <span class="fu">load_workspace</span>(<span class="fu">file.path</span>(dir, <span class="st">"workspace.xml"</span>))</span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a><span class="fu">compute</span>(jws)</span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a>all_m <span class="ot">&lt;-</span> <span class="fu">get_model</span>(jws, <span class="at">progress_bar =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb56-19"><a href="#cb56-19" aria-hidden="true" tabindex="-1"></a>all_m <span class="ot">&lt;-</span> <span class="fu">lapply</span>(all_m, <span class="cf">function</span>(x){</span>
+<span id="cb56-20"><a href="#cb56-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># On enlève les espaces à la fin des noms,</span></span>
+<span id="cb56-21"><a href="#cb56-21" aria-hidden="true" tabindex="-1"></a>  <span class="co"># cela arrive souvent avec les fichiers Excel</span></span>
+<span id="cb56-22"><a href="#cb56-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(x) <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">" *$"</span>, <span class="st">""</span>, <span class="fu">names</span>(x))</span>
+<span id="cb56-23"><a href="#cb56-23" aria-hidden="true" tabindex="-1"></a>  x</span>
+<span id="cb56-24"><a href="#cb56-24" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb56-25"><a href="#cb56-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Booléen pour supprimer les fichiers existants</span></span>
+<span id="cb56-26"><a href="#cb56-26" aria-hidden="true" tabindex="-1"></a>replace_existing_file <span class="ot">&lt;-</span> <span class="cn">TRUE</span></span>
+<span id="cb56-27"><a href="#cb56-27" aria-hidden="true" tabindex="-1"></a><span class="co"># dossier contenant tous les graphiques</span></span>
+<span id="cb56-28"><a href="#cb56-28" aria-hidden="true" tabindex="-1"></a>dir_exp <span class="ot">&lt;-</span> <span class="st">"graph"</span></span>
+<span id="cb56-29"><a href="#cb56-29" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(dir_exp))</span>
+<span id="cb56-30"><a href="#cb56-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dir.create</span>(dir_exp)</span>
+<span id="cb56-31"><a href="#cb56-31" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (sap <span class="cf">in</span> <span class="fu">names</span>(all_m)) {</span>
+<span id="cb56-32"><a href="#cb56-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">dir.exists</span>(<span class="fu">file.path</span>(dir_exp, sap)))</span>
+<span id="cb56-33"><a href="#cb56-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dir.create</span>(<span class="fu">file.path</span>(dir_exp, sap))</span>
+<span id="cb56-34"><a href="#cb56-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(series <span class="cf">in</span> <span class="fu">names</span>(all_m[[sap]])) {</span>
+<span id="cb56-35"><a href="#cb56-35" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Si le fichier existe déjà on ne fait pas l'export</span></span>
+<span id="cb56-36"><a href="#cb56-36" aria-hidden="true" tabindex="-1"></a>    file <span class="ot">&lt;-</span> <span class="fu">file.path</span>(</span>
+<span id="cb56-37"><a href="#cb56-37" aria-hidden="true" tabindex="-1"></a>        dir_exp, sap, <span class="fu">paste0</span>(</span>
+<span id="cb56-38"><a href="#cb56-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># on ne prend que les 20 premiers caractères pour les noms des fichiers</span></span>
+<span id="cb56-39"><a href="#cb56-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># (vite trop long si on part de fichiers Excel)</span></span>
+<span id="cb56-40"><a href="#cb56-40" aria-hidden="true" tabindex="-1"></a>            <span class="fu">substr</span>(series, <span class="dv">1</span>, <span class="dv">20</span>), </span>
+<span id="cb56-41"><a href="#cb56-41" aria-hidden="true" tabindex="-1"></a>            <span class="st">".pdf"</span>))</span>
+<span id="cb56-42"><a href="#cb56-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-43"><a href="#cb56-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="sc">!</span>replace_existing_file <span class="sc">&amp;&amp;</span> <span class="fu">file.exists</span>(file))</span>
+<span id="cb56-44"><a href="#cb56-44" aria-hidden="true" tabindex="-1"></a>      <span class="cf">next</span>;</span>
+<span id="cb56-45"><a href="#cb56-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">print</span>(<span class="fu">sprintf</span>(<span class="st">"%s : %s"</span>, sap, series))</span>
+<span id="cb56-46"><a href="#cb56-46" aria-hidden="true" tabindex="-1"></a>    p_dashboard <span class="ot">&lt;-</span> <span class="fu">graph_synthetique</span>(<span class="at">x =</span> all_m[[sap]][[series]],</span>
+<span id="cb56-47"><a href="#cb56-47" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">titre =</span> series)</span>
+<span id="cb56-48"><a href="#cb56-48" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggsave</span>(<span class="at">filename =</span> file, <span class="at">plot =</span> p_dashboard,</span>
+<span id="cb56-49"><a href="#cb56-49" aria-hidden="true" tabindex="-1"></a>           <span class="co"># format A4 paysage</span></span>
+<span id="cb56-50"><a href="#cb56-50" aria-hidden="true" tabindex="-1"></a>           <span class="at">width =</span> <span class="fl">29.7</span>, <span class="at">height =</span> <span class="dv">21</span>, <span class="at">units =</span> <span class="st">"cm"</span>)</span>
+<span id="cb56-51"><a href="#cb56-51" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb56-52"><a href="#cb56-52" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb56-53"><a href="#cb56-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-54"><a href="#cb56-54" aria-hidden="true" tabindex="-1"></a><span class="co"># Ensuite on va créer un cahier avec tous les pdfs</span></span>
+<span id="cb56-55"><a href="#cb56-55" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (sap <span class="cf">in</span> <span class="fu">names</span>(all_m)) {</span>
+<span id="cb56-56"><a href="#cb56-56" aria-hidden="true" tabindex="-1"></a>  qpdf<span class="sc">::</span><span class="fu">pdf_combine</span>(<span class="at">input =</span> <span class="fu">sprintf</span>(<span class="st">"%s/%s/%s.pdf"</span>, dir_exp, sap,</span>
+<span id="cb56-57"><a href="#cb56-57" aria-hidden="true" tabindex="-1"></a>                                  <span class="fu">substr</span>(<span class="fu">names</span>(all_m[[sap]]), <span class="dv">1</span>, <span class="dv">20</span>)),</span>
+<span id="cb56-58"><a href="#cb56-58" aria-hidden="true" tabindex="-1"></a>                    <span class="at">output =</span> <span class="fu">sprintf</span>(<span class="st">"%s/%s.pdf"</span>, dir_exp, sap))</span>
+<span id="cb56-59"><a href="#cb56-59" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+En V3
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Pour les modèles V3 vous pouvez utiliser le package <a href="https://github.com/AQLT/ggdemetra3"><code>ggdemetra3</code></a>.</p>
+</div>
+</div>
+</section>
+<section id="rjdqa" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="rjdqa"><span class="header-section-number">4.2</span> rjdqa</h2>
+<p><a href="https://github.com/AQLT/rjdqa">rjdqa</a> permet de reproduire deux tableaux de bord différents (mais avec base R plutôt que ggplot2 pour des raisons de performance) :</p>
+<ul>
+<li><p><code>sc_dashboard()</code> qui reproduit le tableau de bord de Statistique Canada : voir notamment chapitre 22 du Handbook sur la désaisonnalisation <a href="https://ec.europa.eu/eurostat/web/products-manuals-and-guidelines/-/KS-GQ-18-001" class="uri">https://ec.europa.eu/eurostat/web/products-manuals-and-guidelines/-/KS-GQ-18-001</a> ;</p></li>
+<li><p><code>simple_dashboard()</code> qui reproduit un tableau de bord simplifié et <code>simple_dashboard2()</code> qui est une légère variante avec en plus les derniers points atypiques.</p></li>
+</ul>
+<p>Si vous avez d’autres idées n’hésitez pas à contribuer au package ou à faire une issue sur github !</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjdqa)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>mod <span class="ot">&lt;-</span> <span class="fu">tramoseats</span>(<span class="fu">window</span>(ipi_c_eu[,<span class="st">"FR"</span>], <span class="at">end =</span> <span class="dv">2019</span>))</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">sc_dashboard</span>(mod))</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">simple_dashboard2</span>(mod))</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-rjdqa-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rjdqa-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="R_5_JD_in_production_files/figure-html/fig-rjdqa-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rjdqa-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Tableau de bord de Statistique Canada avec <code>sc_dashboard()</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-rjdqa-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-rjdqa-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="R_5_JD_in_production_files/figure-html/fig-rjdqa-2.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rjdqa-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Tableau de bord de simplifié avec <code>simple_dashboard2()</code>.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+En V3
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Pour les modèles V3 vous pouvez utiliser le package <a href="https://github.com/AQLT/rjd3report"><code>rjd3report</code></a>.</p>
+</div>
+</div>
+</section>
+<section id="rjdmarkdown" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="rjdmarkdown"><span class="header-section-number">4.3</span> rjdmarkdown</h2>
+<p><a href="https://github.com/AQLT/rjdmarkdown">rjdmarkdown</a> fournit différentes fonctions pour améliorer le rendu des modèles avec rmarkdown. Voir :</p>
+<ul>
+<li><p><a href="https://aqlt.github.io/rjdmarkdown/articles/rjdmarkdown-pdf.pdf" class="uri">https://aqlt.github.io/rjdmarkdown/articles/rjdmarkdown-pdf.pdf</a> pour le rendu en PDF ;</p></li>
+<li><p><a href="https://aqlt.github.io/rjdmarkdown/articles/rjdmarkdown-html.html" class="uri">https://aqlt.github.io/rjdmarkdown/articles/rjdmarkdown-html.html</a> pour le rendu HTML.</p></li>
+</ul>
+<p>Un document peut également être généré de manière automatique à partir d’un workspace. Par exemple :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # On peut reprendre le workspace précédent</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co"># y &lt;- ipi_c_eu[, "FR"]</span></span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a><span class="co"># jws &lt;- new_workspace()</span></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="co"># new_multiprocessing(jws, "X-13")</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a><span class="co"># new_multiprocessing(jws, "TRAMO-SEATS")</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a><span class="co"># for (spec in c("RSA5c", "RSA0", "RSA1", "RSA2c", "RSA3", "RSA4c")) {</span></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   add_sa_item(jws, "X-13", jx13(y, spec), spec)</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a><span class="co"># for (spec in c("RSAfull", "RSA0", "RSA1", "RSA2", "RSA3", "RSA4", "RSA5")) {</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a><span class="co">#   add_sa_item(jws, "TRAMO-SEATS", jtramoseats(y, spec), spec)</span></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a><span class="co"># }</span></span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a><span class="co"># dir &lt;- tempdir()</span></span>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a><span class="co"># save_workspace(jws, file.path(dir, "workspace.xml"))</span></span>
+<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rjdmarkdown)</span>
+<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a>output_file <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".Rmd"</span>)</span>
+<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a><span class="fu">create_rmd</span>(jws, output_file, </span>
+<span id="cb58-18"><a href="#cb58-18" aria-hidden="true" tabindex="-1"></a>           <span class="at">output_format =</span> <span class="fu">c</span>(<span class="st">"html_document"</span>, <span class="st">"pdf_document"</span>),</span>
+<span id="cb58-19"><a href="#cb58-19" aria-hidden="true" tabindex="-1"></a>           <span class="at">output_options =</span> <span class="fu">list</span>(<span class="at">toc =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb58-20"><a href="#cb58-20" aria-hidden="true" tabindex="-1"></a>                              <span class="at">number_sections =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb58-21"><a href="#cb58-21" aria-hidden="true" tabindex="-1"></a><span class="fu">browseURL</span>(<span class="fu">sub</span>(<span class="st">".Rmd"</span>,<span class="st">".pdf"</span>, output_file, <span class="at">fixed =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb58-22"><a href="#cb58-22" aria-hidden="true" tabindex="-1"></a><span class="fu">browseURL</span>(<span class="fu">sub</span>(<span class="st">".Rmd"</span>,<span class="st">".html"</span>, output_file, <span class="at">fixed =</span> <span class="cn">TRUE</span>))</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>En réutilisant la fonction <code>graph_synthetique()</code> précédente :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a>output_file <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".Rmd"</span>)</span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">create_rmd</span>(jws, output_file, </span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">output_format =</span> <span class="fu">c</span>(<span class="st">"pdf_document"</span>),</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">preprocessing_fun =</span> <span class="cn">NULL</span>,</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">decomposition_fun =</span> graph_synthetique,</span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">diagnostics_fun =</span> <span class="cn">NULL</span>,</span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">output_options =</span> <span class="fu">list</span>(<span class="at">toc =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">number_sections =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">knitr_chunk_opts =</span> <span class="fu">list</span>(<span class="at">fig.pos =</span> <span class="st">"h"</span>, <span class="at">echo =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>                                <span class="at">fig.cap =</span> <span class="st">"Tableau de bord"</span>))</span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a><span class="fu">browseURL</span>(out)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+En V3
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Il n’y a pas d’équivalent en V3 mais les fonctions seront à termes dans le package <a href="https://github.com/AQLT/rjd3report"><code>rjd3report</code></a>.</p>
+</div>
+</div>
+
+
+</section>
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Notes de bas de page</h2>
+
+<ol>
+<li id="fn1"><p> Lorsque l’on manipule un workspace de la V2, une autre façon de faire est d’importer le workspace <code>jws &lt;- RJDemetra::load_workspace("workspace.xml")</code> et de le sauvegarder sans rien faire <code>RJDemetra::save_workspace("workspace.xml")</code>. L’export va renommer les noms des fichiers des multi-processings en utilisant leur nom, ce qui évitera cette opération de renommage.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copié");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copié");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<script src="https://giscus.app/client.js" data-repo="AQLT/formations" data-repo-id="R_kgDOIepagw" data-category="Announcements" data-category-id="DIC_kwDOIepag84CSt5_" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light" data-lang="fr" crossorigin="anonymous" data-loading="lazy" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="light">
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Copyright 2025, Alain Quartier-la-Tente</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item compact">
+    <a class="nav-link" href="http://github.com/AQLT">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://aqlt.github.io/">
+      <i class="bi bi-globe" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/alainqlt/">
+      <i class="bi bi-linkedin" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

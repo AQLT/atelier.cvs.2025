@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.5.6">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>FORMATION TEST - Template formation</title>
+<title>{{&lt; var titre.website &gt;}} – Désaisonnaliser une série temporelle</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -48,7 +48,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "Pas de résultats",
     "search-matching-documents-text": "documents trouvés",
@@ -57,6 +63,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "correspondance de plus dans ce document",
     "search-more-matches-text": "correspondances de plus dans ce document",
     "search-clear-button-title": "Effacer",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Annuler",
     "search-submit-button-title": "Envoyer",
     "search-label": "Recherche"
@@ -84,11 +91,11 @@ gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">FORMATION TEST</span>
+    <span class="navbar-title">Atelier CVS 2025</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Recherche"></div>
@@ -98,25 +105,25 @@ gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" rel="" target="" aria-current="page"><i class="bi bi-house" role="img">
+    <a class="nav-link active" href="./index.html" aria-current="page"> <i class="bi bi-house" role="img">
 </i> 
- <span class="menu-text">Template formation</span></a>
+<span class="menu-text">Désaisonnaliser une série temporelle</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://aqlt.github.io/formations/" rel="" target="">
- <span class="menu-text">Ensemble formations</span></a>
+    <a class="nav-link" href="https://aqlt.github.io/teaching/"> 
+<span class="menu-text">Ensemble formations</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="http://github.com/AQLT/formation.template" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="http://github.com/AQLT/atelier.2025.cvs"> <i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -129,14 +136,16 @@ gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
     <h2 id="toc-title">Sur cette page</h2>
    
   <ul>
-  <li><a href="#fa-person-chalkboard-cours" id="toc-fa-person-chalkboard-cours" class="nav-link active" data-scroll-target="#fa-person-chalkboard-cours"><i class="fa-solid fa-person-chalkboard" aria-label="person-chalkboard"></i> Cours</a></li>
-  <li><a href="#fa-computer-travaux-pratiques" id="toc-fa-computer-travaux-pratiques" class="nav-link" data-scroll-target="#fa-computer-travaux-pratiques"><i class="fa-solid fa-computer" aria-label="computer"></i> Travaux pratiques</a>
+  <li><a href="#installation-du-logiciel" id="toc-installation-du-logiciel" class="nav-link active" data-scroll-target="#installation-du-logiciel"><i class="fa-solid fa-plug-circle-check" aria-label="plug-circle-check"></i> Installation du logiciel</a></li>
+  <li><a href="#cours" id="toc-cours" class="nav-link" data-scroll-target="#cours"><i class="fa-solid fa-person-chalkboard" aria-label="person-chalkboard"></i> Cours</a></li>
+  <li><a href="#travaux-pratiques" id="toc-travaux-pratiques" class="nav-link" data-scroll-target="#travaux-pratiques"><i class="fa-solid fa-computer" aria-label="computer"></i> Travaux pratiques</a>
   <ul class="collapse">
-  <li><a href="#tp-jdemetra" id="toc-tp-jdemetra" class="nav-link" data-scroll-target="#tp-jdemetra">TP JDemetra+</a></li>
-  <li><a href="#tp-fa-brands-r-project" id="toc-tp-fa-brands-r-project" class="nav-link" data-scroll-target="#tp-fa-brands-r-project">TP <i class="fa-brands fa-r-project" aria-label="r-project"></i></a></li>
+  <li><a href="#tp" id="toc-tp" class="nav-link" data-scroll-target="#tp">TP <i class="fa-brands fa-r-project" aria-label="r-project"></i></a></li>
+  <li><a href="#tp-jdemetra-complément" id="toc-tp-jdemetra-complément" class="nav-link" data-scroll-target="#tp-jdemetra-complément">TP JDemetra+ (Complément)</a></li>
   </ul></li>
-  <li><a href="#fa-book-atlas-bibliographie" id="toc-fa-book-atlas-bibliographie" class="nav-link" data-scroll-target="#fa-book-atlas-bibliographie"><i class="fa-solid fa-book-atlas" aria-label="book-atlas"></i> Bibliographie</a></li>
-  <li><a href="#fa-copyright-licence" id="toc-fa-copyright-licence" class="nav-link" data-scroll-target="#fa-copyright-licence"><i class="fa-solid fa-copyright" aria-label="copyright"></i> Licence</a></li>
+  <li><a href="#fichiers-externes" id="toc-fichiers-externes" class="nav-link" data-scroll-target="#fichiers-externes"><i class="fa-solid fa-file-zipper" aria-label="file-zipper"></i> Fichiers externes</a></li>
+  <li><a href="#bibliographie" id="toc-bibliographie" class="nav-link" data-scroll-target="#bibliographie"><i class="fa-solid fa-book-atlas" aria-label="book-atlas"></i> Bibliographie</a></li>
+  <li><a href="#licence" id="toc-licence" class="nav-link" data-scroll-target="#licence"><i class="fa-solid fa-copyright" aria-label="copyright"></i> Licence</a></li>
   </ul>
 </nav>
     </div>
@@ -145,7 +154,7 @@ gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Template formation</h1>
+<h1 class="title">Désaisonnaliser une série temporelle</h1>
 </div>
 
 
@@ -156,7 +165,7 @@ gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Date de publication</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">nov. 2023</p>
+      <p class="date">août 2025</p>
     </div>
   </div>
   
@@ -164,36 +173,89 @@ gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
   </div>
   
 
+
 </header>
 
-<p>Supports de cours et exercices de la formation <a href="https://www.lecepe.fr/formations/methodes-statistiques/series-temporelles/desaisonnaliser-une-serie-temporelle_42.html">Désaisonnaliser une série temporelle au CEPE</a> les 6, 7, 13, 14 novembre 2023.</p>
-<section id="fa-person-chalkboard-cours" class="level1">
+
+<p>Supports de cours et exercices du séminaire régional sur la correction des variations saisonnières avec R et JDemetra+ du 18 au 22 août 2025.</p>
+<section id="installation-du-logiciel" class="level1">
+<h1><i class="fa-solid fa-plug-circle-check" aria-label="plug-circle-check"></i> Installation du logiciel</h1>
+<p>Vous pouvez retrouver <a href="./manuel_installation.html">ici</a> le manuel d’installation de JDemetra+, RJDemetra et le JWSACruncher avec une version portable de Java <i class="fa-brands fa-java" aria-label="java"></i>.</p>
+</section>
+<section id="cours" class="level1">
 <h1><i class="fa-solid fa-person-chalkboard" aria-label="person-chalkboard"></i> Cours</h1>
 <ol type="1">
-<li><a href="Cours/01_introduction.pdf">Introduction à la désaisonnalisation</a></li>
+<li><p><a href="Cours/01_introduction.pdf">Introduction à la désaisonnalisation</a></p></li>
+<li><p><a href="Cours/02a_Intro_R.pdf">Introduction R</a> et <a href="Cours/02b_R_et_JD.pdf">R et JDemetra+</a></p></li>
+<li><p><a href="Cours/03_Exploration_series.pdf">Exploration des séries et décomposition</a></p></li>
+<li><p><a href="Cours/04_Methode_X13-ARIMA.pdf">Methode X13-ARIMA</a></p></li>
+<li><p><a href="Cours/05_CJO.pdf">La correction des effets de calendrier</a></p></li>
+<li><p><a href="Cours/06_Le_modele_Reg-ARIMA.pdf">(Complément) Le modèle Reg-ARIMA</a></p></li>
+<li><p><a href="Cours/07_Pb_estimation_regarima.pdf">(Complément) Problèmes d’estimation du modèle Reg-ARIMA</a></p></li>
+<li><p><a href="Cours/08_Les_Moyennes_Mobiles.pdf">(Complément) Les Moyennes Mobiles</a></p></li>
+<li><p><a href="Cours/09_temps_production.pdf">Les trois temps de la production</a></p></li>
 </ol>
 </section>
-<section id="fa-computer-travaux-pratiques" class="level1">
+<section id="travaux-pratiques" class="level1">
 <h1><i class="fa-solid fa-computer" aria-label="computer"></i> Travaux pratiques</h1>
-<section id="tp-jdemetra" class="level2">
-<h2 class="anchored" data-anchor-id="tp-jdemetra">TP JDemetra+</h2>
-<ol type="1">
-<li><a href="./TP/JD_1_Premiere_manipulation_JD.html">Première manipulation de JDemetra+</a></li>
-</ol>
-</section>
-<section id="tp-fa-brands-r-project" class="level2">
-<h2 class="anchored" data-anchor-id="tp-fa-brands-r-project">TP <i class="fa-brands fa-r-project" aria-label="r-project"></i></h2>
+<section id="tp" class="level2">
+<h2 class="anchored" data-anchor-id="tp">TP <i class="fa-brands fa-r-project" aria-label="r-project"></i></h2>
 <ol start="0" type="1">
-<li><a href="./TP/JD_1_Premiere_manipulation_JD.html">Traitement des séries temporelles sous R</a></li>
+<li><p><a href="./TP/R_0_Manipulation_series_temporelles.html">(Complément) Traitement des séries temporelles sous <i class="fa-brands fa-r-project" aria-label="r-project"></i></a></p></li>
+<li><p><a href="./TP/R_1_R_et_JD.html">R et JDemetra+</a></p></li>
+<li><p><a href="./TP/R_2_CJO.html">Correction des jours ouvrables</a></p></li>
+<li><p><a href="./TP/R_3_Preadjustment.html">(Complément) Preajustement</a></p></li>
+<li><p><a href="./TP/R_4_X11.html">(Complément) Décomposition (X11)</a></p></li>
+<li><p><a href="./TP/R_5_JD_in_production.html">JDemetra+ en production</a> et programmes <a href="R-macronia/1-cruncher.R">1-cruncher.R</a> et <a href="R-macronia/2-tableau de bord.R">2-tableau de bord.R</a></p></li>
+<li><p>Autres programmes : <a href="R-macronia/3-imae-calage.R">3-imae-calage</a> et <a href="R-macronia/4-cvs-indirecte.R">4-cvs-indirecte</a></p></li>
+</ol>
+</section>
+<section id="tp-jdemetra-complément" class="level2">
+<h2 class="anchored" data-anchor-id="tp-jdemetra-complément">TP JDemetra+ (Complément)</h2>
+<ol type="1">
+<li><p><a href="./TP/JD_1_Premiere_manipulation_JD.html">Première manipulation de JDemetra+</a></p></li>
+<li><p><a href="./TP/JD_2_Analyse_exploratoire.html">Analyse exploratoire</a></p></li>
+<li><p><a href="./TP/JD_3_CVS_sans_CJO.html">Désaisonnalisation sans correction des jours ouvrables</a></p></li>
+<li><p><a href="./TP/JD_4_CVS_CJO.html">Désaisonnalisation avec correction des jours ouvrables</a></p></li>
+<li><p><a href="./TP/JD_5_Preajustment.html">Pré-ajustement</a></p></li>
+<li><p><a href="./TP/JD_6_X11.html">Décomposition (X11)</a></p></li>
 </ol>
 </section>
 </section>
-<section id="fa-book-atlas-bibliographie" class="level1">
-<h1><i class="fa-solid fa-book-atlas" aria-label="book-atlas"></i> Bibliographie</h1>
+<section id="fichiers-externes" class="level1">
+<h1><i class="fa-solid fa-file-zipper" aria-label="file-zipper"></i> Fichiers externes</h1>
+<p>Fichiers externes associés à ce cours :</p>
+<ul>
+<li>Workspace et données associées à la Macronie&nbsp;: <a href="data/macronia.zip">macronia.zip</a></li>
+<li>Jeu de régresseur JO (pour la V2, voir <a href="./TP/R_2_CJO.html">TP2 - Correction des jours ouvrables</a>)&nbsp;: <a href="data/regcjo.xlsx">regcjo.xlsx</a></li>
+<li>Description des M-statistiques&nbsp;: <a href="PDF/Description_statsM.pdf">Description_statsM.pdf</a></li>
+<li>Description des objets exportables depuis JDemetra+ (V2) : <a href="PDF/output_jd.pdf">output_jd.pdf</a></li>
+<li>Spécifications pré-définies&nbsp;: <a href="PDF/Predefined_specifications.pdf">Predefined_specifications.pdf</a></li>
+<li>Méthodes de rafraîchissement&nbsp;: <a href="PDF/refresh_policies.pdf">refresh_policies.pdf</a></li>
+</ul>
 </section>
-<section id="fa-copyright-licence" class="level1">
+<section id="bibliographie" class="level1">
+<h1><i class="fa-solid fa-book-atlas" aria-label="book-atlas"></i> Bibliographie</h1>
+<ul>
+<li><p>Handbook (rassemble de nombreux articles sur la désaisonnalisation)&nbsp;: <a href="https://ec.europa.eu/eurostat/web/products-manuals-and-guidelines/-/ks-gq-18-001" class="uri">https://ec.europa.eu/eurostat/web/products-manuals-and-guidelines/-/ks-gq-18-001</a></p></li>
+<li><p>Guidelines (recommandations sur la désaisonnalisation)&nbsp;: <a href="https://ec.europa.eu/eurostat/web/products-manuals-and-guidelines/w/ks-gq-24-012" class="uri">https://ec.europa.eu/eurostat/web/products-manuals-and-guidelines/w/ks-gq-24-012</a></p></li>
+<li><p>Ladiray D., et Quenneville B. (1999). Comprendre la méthode X11, <em>Institut National de la Statistique et des Études Économiques</em>, <a href="https://www.census.gov/pub/ts/papers/x11doc.pdf" class="uri">https://www.census.gov/pub/ts/papers/x11doc.pdf</a></p></li>
+<li><p>Documents de vulgarisation (pour communiquer avec utilisateurs) :</p>
+<ul>
+<li><a href="https://www.census.gov/data/software/x13as.References.html#par_list_1322540616" class="uri">https://www.census.gov/data/software/x13as.References.html#par_list_1322540616</a></li>
+<li>Données désaisonnalisées — Foire aux questions, Statistique Canada. <a href="https://www150.statcan.gc.ca/n1/dai-quo/btd-add/btd-add-fra.htm" class="uri">https://www150.statcan.gc.ca/n1/dai-quo/btd-add/btd-add-fra.htm</a></li>
+</ul></li>
+<li><p>Autour de JDemetra+ :</p>
+<ul>
+<li><p>Manuel de référence (qui ne sera plus actualisé) : <a href="https://cros-legacy.ec.europa.eu/system/files/jdemetra_reference_manual_version_2.1_0.pdf" class="uri">https://cros-legacy.ec.europa.eu/system/files/jdemetra_reference_manual_version_2.1_0.pdf</a> et <a href="https://cros-legacy.ec.europa.eu/system/files/jdemetra_reference_manual_version_2.2_0.docx" class="uri">https://cros-legacy.ec.europa.eu/system/files/jdemetra_reference_manual_version_2.2_0.docx</a></p></li>
+<li><p>Manuel utilisateurs : <a href="https://cros-legacy.ec.europa.eu/content/jdemetra-user-guide-version-22_en" class="uri">https://cros-legacy.ec.europa.eu/content/jdemetra-user-guide-version-22_en</a></p></li>
+<li><p>Documentation de JDemetra+ <a href="https://jdemetradocumentation.github.io/JDemetra-documentation/" class="uri">https://jdemetradocumentation.github.io/JDemetra-documentation/</a> et nouvelle version <a href="https://jdemetra-new-documentation.netlify.app" class="uri">https://jdemetra-new-documentation.netlify.app</a></p></li>
+</ul></li>
+</ul>
+</section>
+<section id="licence" class="level1">
 <h1><i class="fa-solid fa-copyright" aria-label="copyright"></i> Licence</h1>
-<p>Ces supports de cours sont librement réutilisable sous © 2023 Alain Quartier-la-Tente, Insee <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 3.0 <img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Licence Creative Commons" style="display: inline-block; margin: 0"></a>.</p>
+<p>Ces supports de cours sont librement réutilisable sous © 2025 Alain Quartier-la-Tente <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0 <img src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" alt="Licence Creative Commons" style="display: inline-block; margin: 0"></a>.</p>
 
 
 </section>
@@ -278,10 +340,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -291,8 +352,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -305,6 +375,125 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -348,6 +537,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -373,6 +563,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -434,10 +650,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <script src="https://giscus.app/client.js" data-repo="AQLT/formations" data-repo-id="R_kgDOIepagw" data-category="Announcements" data-category-id="DIC_kwDOIepag84CSt5_" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light" data-lang="fr" crossorigin="anonymous" data-loading="lazy" async="">
 </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="light">
 </div> <!-- /content -->
 <footer class="footer">
   <div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2023, Alain Quartier-la-Tente, Insee</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2025, Alain Quartier-la-Tente</p>
+</div>   
     <div class="nav-footer-center">
       &nbsp;
     </div>
@@ -465,6 +685,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+
 
 
 

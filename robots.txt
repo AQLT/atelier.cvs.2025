@@ -1,1 +1,9 @@
-Sitemap: https://github.com/AQLT/formation.template/sitemap.xml
+User-agent: *
+User-agent: AdsBot-Google
+# Enlever la ligne suivante :
+Disallow: https://aqlt.github.io/atelier.cvs.2025/quiz.html
+
+
+User-agent: *
+
+Sitemap: https://aqlt.github.io/atelier.cvs.2025/sitemap.xml
