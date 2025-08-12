@@ -1,0 +1,171 @@
+---
+title: "4 - Qualité de la décomposition sous R"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = FALSE, warning = FALSE,
+					  message = FALSE)
+options(enable_print_style = FALSE)
+library(RJDemetra)
+library(knitr)
+```
+
+
+> L'objectif de ce TP est d'apprendre à étudier la qualité de la décomposition depuis RJDemetra.
+
+
+Pour installer tous les packages utiles de ce TP, lancer le programme :
+
+```{r}
+#| eval: false
+#| label: install
+packages_to_install <- c(
+  "RJDemetra",
+  "rjd3toolkit", "rjd3x13", "rjd3tramoseats", "rjd3providers", "rjd3workspace"
+  )
+
+packages <- packages_to_install[! packages_to_install %in% installed.packages()[,"Package"]]
+if (length(packages) > 0) {
+		install.packages(
+	  packages, repos = c("https://aqlt.r-universe.dev", "https://cloud.r-project.org")
+	  )
+}
+```
+
+
+Dans ce TP nous allons voir différentes façon de vérifier la qualité de la décomposition.
+Tout d'abord, on peut commencer par regarder les statistiques m dont les définitions sont rappelées ci-dessous
+
+```{r, echo = FALSE}
+data_statm <- XLConnect::readWorksheetFromFile("../Cours/Stat M.xlsx",sheet = 1,
+											   rownames = 1)
+colnames(data_statm) <- gsub(".", " ", colnames(data_statm),fixed = TRUE)
+kable(data_statm, booktabs = TRUE,
+	align = c("c","l","l","l"),
+	escape = FALSE) 
+```
+
+# `RJDemetra`
+
+Prenons une spécification par défaut :
+
+```{r}
+library(RJDemetra)
+ipi_fr <- ipi_c_eu[, "FR"]
+mysa <- RJDemetra::x13(ipi_fr, "RSA4")
+```
+
+À partir d'un objet `"X13"`, les statistiques m disponibles dans la sous-liste `.$decomposition` :
+
+```{r}
+mysa$decomposition
+```
+
+::: callout-note
+## Exercice
+Que signifie ces valeurs des statistiques m plus grandes que 1 ?
+Est-ce important ? 
+Si oui comment les corriger ?
+:::
+
+::: {.callout-caution collapse="true"}
+## Indice
+Que pensez-vous de la tendance (`plot(mysa$final, type_chart = "sa-trend")`) ? 
+Quelle est la contribution du cycle à la variance totale (`mysa$diagnostics$variance_decomposition`) ? 
+:::
+
+::: {.callout-tip collapse="true"}
+## Solution
+La tendance est plutôt plate et la contribution du cycle à la variance totale est petite, on peut donc ignorer la statistique m3. 
+La statistique M5 suggère de prendre un filtre saisonnier plus long, par exemple en utilisant le code suivant :
+```{r}
+mysa2 <- RJDemetra::x13(get_ts(mysa), RJDemetra::x13_spec(mysa, x11.seasonalma = "S3X9"))
+mysa2$decomposition
+mysa2$diagnostics
+```
+
+Mais en faisant cela on crée de la saisonnalité résiduelle ! C'est donc mieux de rester sur les paramètres par défaut.
+:::
+
+Alors que pour changer le filtre saisonnier il suffit d'utiliser le paramètre `x11.seasonalma`, pour changer la longueur du filtre de Henderson il faut désactiver l'option de recherche automatique de la longueur du filtre (`x11.trendAuto = FALSE`) et spécifier la longueur dans le paramètre `x11.trendma`:
+
+```{r}
+new_spec <- x13_spec(mysa, x11.trendma = 15)
+new_spec$x11# Colonne trendma inchangée !
+new_spec <- x13_spec(mysa, x11.trendma = 15, x11.trendAuto = FALSE)
+new_spec$x11
+```
+
+Sur la qualité de la décomposition, la sous liste `.$diagnostics` contient les contributions des différentes composantes à la variance de la série, le test combiné et les tests sur la saisonnalité et jours ouvrables résiduels :
+
+```{r}
+mysa$diagnostics
+```
+
+Ces tests sont effectués sur l'ensemble de la série, alors que dans le main result le f-test est effectué sur les 8 dernières années.
+Il n'est pour l'instant pas possible d'exporter les tests de saisonnalité résiduelle sur les 8 ou 10 dernières années.
+À partir du packages `rjd3toolkit` il est en revanche possible de calculer tous les tests à l'exception du f-test^[Entre JDemetra+ 2.x et JDemetra+ 3.x la spécification du f-test a été changée].
+
+Par rapport aux éléments vus en cours, les msr par mois sont exportables en utilisant le paramètre `userdefined` de `x13 :
+
+```{r}
+mysa <- RJDemetra::x13(ipi_fr, 
+			userdefined = c("diagnostics.msr-global",
+							sprintf("diagnostics.msr(%i)", 1:12)))
+c(mysa$user_defined)
+```
+
+# Version 3
+
+Prenons une spécification par défaut :
+
+```{r, include=FALSE}
+sa_jd3 <- rjd3x13::x13(ipi_fr, "rsa4")
+```
+
+Les statistiques m disponibles dans la sous-liste `.$result$mstats` :
+
+```{r}
+sa_jd3$result$mstats
+```
+
+::: callout-note
+## Exercice
+Que signifie ces valeurs des statistiques m plus grandes que 1 ? Est-ce important ? 
+Si oui comment les corriger ?
+:::
+
+::: {.callout-caution collapse="true"}
+## Indice
+Que pensez-vous de la tendance (`plot(sa_jd3)`) ? 
+Quelle est la contribution du cycle à la variance totale (`sa_jd3$result$diagnostics$vardecomposition` ou `rjd3toolkit::diagnostics(sa_jd3)[[1]]`) ? 
+:::
+
+::: {.callout-tip collapse="true"}
+## Solution
+La tendance est plutôt plate et la contribution du cycle à la variance totale est petite, on peut donc ignorer la statistique m3. 
+La statistique M5 suggère de prendre un filtre saisonnier plus long, par exemple en utilisant le code suivant :
+```{r}
+sa2_jd3 <- rjd3x13::x13(
+	sa_jd3$result$preadjust$a1,
+	sa_jd3$estimation_spec |> 
+		rjd3x13::set_x11(seasonal.filter = "S3X9"))
+sa2_jd3$result$mstats
+rjd3toolkit::diagnostics(sa2_jd3)[["residual_tests"]]
+```
+
+Mais en faisant cela on crée de la saisonnalité résiduelle ! C'est donc mieux de rester sur les paramètres par défaut.
+:::
+
+
+Par rapport à `RJDemetra`, plus d'éléments associés aux MSR sont exportables :
+
+```{r}
+sa_jd3 <- rjd3x13::x13(
+	ipi_fr, "rsa4", 
+	userdefined = c("decomposition.d9-global-msr", 
+					"decomposition.d9-msr", 
+					"decomposition.d9-msr-table")
+)
+c(sa_jd3$user_defined)
+```

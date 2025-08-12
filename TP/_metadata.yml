@@ -4,3 +4,7 @@ logo: "img/logo.png"
 format:
   html:
     number-sections: true
+crossref:
+  tbl-prefix: table
+  fig-prefix: figure
+  sec-prefix: section

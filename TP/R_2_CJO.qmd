@@ -1,0 +1,936 @@
+---
+title: "2 - Correction des jours ouvrables"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, collapse = FALSE, warning = FALSE,
+					  message = FALSE)
+options(enable_print_style = FALSE)
+library(RJDemetra)
+library(kableExtra)
+library(knitr)
+library(XLConnect)
+```
+
+
+> L'objectif de ce TP est d'apprendre à créer des régresseurs jours ouvrables personnalisés, à les utiliser dans RJDemetra/JDemetra+ et à vérifier la qualité de la correction.
+
+Pour créer des régresseurs jours ouvrables personnalisés, deux solutions :
+
+1. Le faire depuis JDemetra+, en créant un calendrier personnalisé puis en exportant les régresseurs. 
+Voir par exemple la documentation de JDemetra+ [ici](https://jdemetradocumentation.github.io/JDemetra-documentation/pages/case-studies/calendars-main.html) et [là](https://jdemetradocumentation.github.io/JDemetra-documentation/pages/case-studies/calendars-national.html).
+
+2. Créer le calendrier depuis R à l'aide du package [`rjd3toolkit`](https://github.com/rjdverse/rjd3toolkit).
+
+
+Ce package n'étant pas sur le CRAN, pour les installer on peut par exemple utiliser la fonction `remotes::install_github()` ou le dépot `rjdverse.r-universe.dev` (ou `aqlt.r-universe.dev` pour les versions en developpement):
+```{r, eval=FALSE}
+# # Configurer si besoin le proxy
+# proxy <- "proxy_a_definir"
+# Sys.setenv(HTTPS_PROXY = proxy)
+# remotes::install_github("rjdverse/rjd3toolkit")
+install.packages("rjd3toolkit", repos = c("https://aqlt.r-universe.dev", "https://cloud.r-project.org"))
+```
+
+Dans ce TP, nous nous intéresserons uniquement à la seconde option. 
+En effet, le package R est plus flexible et permet de créer des régresseurs moins classiques que les *working days* et *trading days*. 
+
+Pour installer tous les packages utiles de ce TP, lancer le programme :
+
+```{r}
+#| eval: false
+#| label: install
+packages_to_install <- c("RJDemetra", "rjd3toolkit", "rjd3x13", "rjd3tramoseats", "rjd3providers", "rjd3workspace")
+
+packages <- packages_to_install[! packages_to_install %in% installed.packages()[,"Package"]]
+if (length(packages) > 0) {
+	install.packages(
+	  packages, 
+	  repos = c("https://aqlt.r-universe.dev", "https://cloud.r-project.org")
+	  )
+}
+```
+
+
+# Création de régresseurs JO avec `rjd3toolkit`
+
+## Création d'un calendrier 
+
+Par défaut, les régresseurs jours ouvrables de JDemetra+ ne prennent pas en compte les spécificité calendaires des pays : on ne prend pas en compte les jours fériés. 
+Pour les prendre en compte, il faut créer son propre calendrier où l'on supposera qu'un jour férié de plus dans le mois a le même effet qu'un dimanche.
+
+```{r}
+library(rjd3toolkit)
+```
+
+Trois fonctions peuvent être utilisées pour ajouter des jours fériés :
+
+1. `fixed_day()` pour ajouter un jour férié qui tombe à date fixe. Par exemple, pour ajouter le 8 mai :
+
+```{r}
+#| eval: false
+fixed_day(month =  5, day = 8)
+```
+
+2. `easter_day()` pour ajouter un jour férié dont le jour dépend de Pâques : le paramètre `offset` permet de spécifier le nombre de jours avant (si négatif) ou après Pâques (si positif). Par exemple, pour ajouter la Pentecôte qui a lieu 60 jours après Pâques :
+
+```{r}
+#| eval: false
+easter_day(offset = 60)
+```
+
+3. `single_day()` pour ajouter un jour ferié qui n'a eu lieu qu'une seule fois.
+
+```{r}
+#| eval: false
+single_day("1993-01-15")
+```
+
+4. `fixed_week_day()` qui permet d'ajouter des jours fériés qui apparaissent certaines semaines de certains mois (par exemple le premier lundi du mois de septembre aux USA)
+
+```{r}
+#| eval: false
+fixed_week_day(9, 1, 1) # first Monday(1) of September.
+```
+
+
+5. `special_day()` qui permet d'ajouter des jours fériés par rapport à des dates déjà connues dans JDemetra+ (voir tableau ci-dessous). Comme pour la fonction `easter_day()`, le paramètre `offset` permet de spécifier la position du jour voulu par rapport rapport à la fête pré-spécifié (par défaut `offset = 0`, le jour férié coïncide avec le jour pré-spécifié). Par exemple, pour ajouter le nouvel an :
+
+
+```{r}
+#| eval: false
+special_day("NEWYEAR")
+```
+
+```{r, prespecifiespecial_days, echo=FALSE}
+library(kableExtra)
+special_days <- readWorksheetFromFile("holidaysJD.xlsx", sheet = 1)
+special_days <- special_days[!special_days[,1]%in%c("THANKSGIVING", "LABORDAY", "JULIANEASTER"),]
+kbl(special_days,booktabs = TRUE,caption = "Jours pré-spécifiés",row.names = FALSE) %>%
+	kable_paper("hover", full_width = F)
+```
+
+
+::: callout-note
+## Exercice
+Créer un calendrier qui contient tous les jours fériés de votre pays.
+:::
+
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+Deux exemples :
+
+1. Calendrier associé à la France :
+
+```{r}
+FR <- national_calendar(list(
+	special_day("NEWYEAR"),
+	special_day("EASTERMONDAY"), # Lundi de Pâques
+	special_day("MAYDAY"), # 1er mai
+	special_day("ASCENSION"), # Jour de l'Ascension
+	fixed_day(5, 8),
+	special_day("WHITMONDAY"), # Lundi de Pentecôte
+	fixed_day(7, 14),
+	special_day("ASSUMPTION"), # Assomption
+	special_day("ALLSAINTSDAY"), # Toussaint
+	special_day("ARMISTICE")
+))
+CAL <- national_calendar(FR)
+```
+
+
+2. Calendrier associé au Sénégal, la difficulté étant qu'il faut ajouter à la main des jours associés aux fêtes musulmanes
+
+```{r}
+jours_senegal <- list(
+  special_day("NEWYEAR"),
+	special_day("EASTERMONDAY"), # Lundi de Pâques
+  fixed_day(4, 4), # Jour de l'indépendance du Sénégal
+  special_day("MAYDAY"), # 1er mai
+  special_day("ASCENSION"), # Jour de l'Ascension
+	special_day("WHITMONDAY"), # Lundi de Pentecôte
+  special_day("ASSUMPTION"), # Assomption de Marie
+	special_day("ALLSAINTSDAY"), # Toussaint
+  special_day("CHRISTMAS") # Noël
+)
+# # Manque Début ramadan, Korité (Aïd al-Fitr), Tabaski (Aïd el-Kébir), Tamkharite, Magal de Touba (non officiel), Maouloud et jours décrétés
+# # On récupère ces jours construisant un fichier Excel
+# jours_mobiles <- readxl::read_excel("DataCVS/DateFetesMusulmanes_Senegal.xlsx") |>
+#   as.data.frame()
+# jours_mobiles <- jours_mobiles[,-1] #on enlève l'année
+# jours_mobiles <- lapply(jours_mobiles, function(x){
+#   na.omit(as.character(format(x, "%Y-%m-%d")))
+#   })
+# cat(unlist(lapply(names(jours_mobiles), function(day){
+#   c(
+#     sprintf("# %s", day),
+#     sprintf('single_day("%s")', jours_mobiles[[day]])
+#   )
+# })),
+#   sep= ",\n")
+# cat(sprintf(
+#   'single_day("%s"), # %s',
+#   all_dates$date, all_dates$holiday),
+#   sep= "\n")
+
+jours_senegal <- c(
+  jours_senegal,
+  list(
+    # DEBUT_RAMADAN,
+single_day("1990-03-28"),
+single_day("1991-03-18"),
+single_day("1992-03-06"),
+single_day("1993-02-23"),
+single_day("1994-02-12"),
+single_day("1995-02-14"),
+single_day("1996-01-22"),
+single_day("1997-01-11"),
+single_day("1997-12-31"),
+single_day("1998-12-20"),
+single_day("1999-12-10"),
+single_day("2000-11-28"),
+single_day("2001-11-17"),
+single_day("2002-11-07"),
+single_day("2003-10-27"),
+single_day("2004-10-15"),
+single_day("2005-10-05"),
+single_day("2006-09-24"),
+single_day("2007-09-14"),
+single_day("2008-09-02"),
+single_day("2009-08-22"),
+single_day("2010-08-12"),
+single_day("2011-08-01"),
+single_day("2012-07-20"),
+single_day("2013-07-10"),
+single_day("2014-06-29"),
+single_day("2015-07-18"),
+single_day("2016-06-07"),
+single_day("2017-05-27"),
+single_day("2018-05-17"),
+single_day("2019-05-06"),
+single_day("2020-04-24"),
+single_day("2021-04-14"),
+single_day("2022-04-03"),
+single_day("2023-03-23"),
+single_day("2024-03-12"),
+# KORITE,
+single_day("1990-04-27"),
+single_day("1991-04-16"),
+single_day("1992-04-04"),
+single_day("1993-03-25"),
+single_day("1994-03-14"),
+single_day("1995-03-03"),
+single_day("1996-02-09"),
+single_day("1997-02-09"),
+single_day("1998-01-29"),
+single_day("1999-01-18"),
+single_day("2000-01-08"),
+single_day("2000-12-27"),
+single_day("2001-12-16"),
+single_day("2002-12-06"),
+single_day("2003-11-25"),
+single_day("2004-11-13"),
+single_day("2005-11-03"),
+single_day("2006-10-23"),
+single_day("2007-10-13"),
+single_day("2008-10-01"),
+single_day("2009-09-20"),
+single_day("2010-09-09"),
+single_day("2011-08-29"),
+single_day("2012-08-17"),
+single_day("2013-08-07"),
+single_day("2014-07-27"),
+single_day("2015-07-16"),
+single_day("2016-07-05"),
+single_day("2017-06-24"),
+single_day("2018-06-14"),
+single_day("2019-06-03"),
+single_day("2020-05-22"),
+single_day("2021-05-12"),
+single_day("2022-05-01"),
+single_day("2023-04-20"),
+single_day("2024-04-10"),
+# TABASKI,
+single_day("1990-06-24"),
+single_day("1991-06-23"),
+single_day("1992-06-11"),
+single_day("1993-06-01"),
+single_day("1994-05-21"),
+single_day("1995-05-10"),
+single_day("1996-04-29"),
+single_day("1997-04-19"),
+single_day("1998-04-08"),
+single_day("1999-03-28"),
+single_day("2000-03-17"),
+single_day("2001-03-06"),
+single_day("2002-02-23"),
+single_day("2003-02-13"),
+single_day("2004-02-02"),
+single_day("2005-01-21"),
+single_day("2006-01-11"),
+single_day("2006-12-31"),
+single_day("2007-12-21"),
+single_day("2008-12-09"),
+single_day("2009-11-11"),
+single_day("2010-11-18"),
+single_day("2011-11-07"),
+single_day("2012-10-26"),
+single_day("2013-10-16"),
+single_day("2014-10-05"),
+single_day("2015-09-25"),
+single_day("2016-09-13"),
+single_day("2017-09-02"),
+single_day("2018-08-23"),
+single_day("2019-08-12"),
+single_day("2020-07-31"),
+single_day("2021-07-21"),
+single_day("2022-06-10"),
+single_day("2023-06-29"),
+single_day("2024-06-18"),
+# TAMKHARITE,
+single_day("1990-07-04"),
+single_day("1991-07-22"),
+single_day("1992-07-11"),
+single_day("1993-06-30"),
+single_day("1994-06-19"),
+single_day("1995-06-09"),
+single_day("1996-05-28"),
+single_day("1997-05-18"),
+single_day("1998-05-07"),
+single_day("1999-04-26"),
+single_day("2000-04-15"),
+single_day("2001-04-04"),
+single_day("2002-03-24"),
+single_day("2003-03-14"),
+single_day("2004-03-02"),
+single_day("2005-02-19"),
+single_day("2006-02-09"),
+single_day("2007-01-29"),
+single_day("2008-01-19"),
+single_day("2009-01-07"),
+single_day("2009-12-27"),
+single_day("2010-12-17"),
+single_day("2011-12-06"),
+single_day("2012-11-24"),
+single_day("2013-11-14"),
+single_day("2014-11-03"),
+single_day("2015-11-30"),
+single_day("2016-10-12"),
+single_day("2017-10-01"),
+single_day("2018-09-21"),
+single_day("2019-09-10"),
+single_day("2020-08-29"),
+single_day("2021-08-19"),
+single_day("2022-08-08"),
+single_day("2023-07-28"),
+single_day("2024-07-17"),
+# MAOULOUD,
+single_day("1990-10-02"),
+single_day("1991-09-21"),
+single_day("1992-09-10"),
+single_day("1993-08-30"),
+single_day("1994-08-19"),
+single_day("1995-08-09"),
+single_day("1996-07-28"),
+single_day("1997-07-18"),
+single_day("1998-07-07"),
+single_day("1999-06-26"),
+single_day("2000-06-15"),
+single_day("2001-06-04"),
+single_day("2002-05-24"),
+single_day("2003-05-14"),
+single_day("2004-05-02"),
+single_day("2005-04-21"),
+single_day("2006-04-11"),
+single_day("2007-03-31"),
+single_day("2008-03-20"),
+single_day("2009-03-09"),
+single_day("2010-02-26"),
+single_day("2011-02-16"),
+single_day("2012-02-05"),
+single_day("2013-01-24"),
+single_day("2014-01-14"),
+single_day("2015-01-03"),
+single_day("2015-11-23"),
+single_day("2016-12-12"),
+single_day("2018-12-01"),
+single_day("2018-11-21"),
+single_day("2019-11-18"),
+single_day("2020-10-29"),
+single_day("2021-10-19"),
+single_day("2022-10-08"),
+single_day("2023-09-27"),
+single_day("2024-09-15"),
+# MAGAL,
+single_day("1990-09-09"),
+single_day("1991-08-29"),
+single_day("1992-09-18"),
+single_day("1993-10-07"),
+single_day("1994-07-27"),
+single_day("1995-07-17"),
+single_day("1996-07-05"),
+single_day("1997-06-25"),
+single_day("1998-06-14"),
+single_day("1999-06-03"),
+single_day("2000-05-23"),
+single_day("2001-05-12"),
+single_day("2002-05-01"),
+single_day("2003-04-21"),
+single_day("2004-04-09"),
+single_day("2005-03-29"),
+single_day("2006-03-19"),
+single_day("2007-03-08"),
+single_day("2008-02-26"),
+single_day("2009-02-14"),
+single_day("2010-02-03"),
+single_day("2011-01-03"),
+single_day("2012-01-13"),
+single_day("2013-01-01"),
+single_day("2013-12-22"),
+single_day("2014-12-11"),
+single_day("2015-12-01"),
+single_day("2016-11-19"),
+single_day("2017-11-08"),
+single_day("2018-10-29"),
+single_day("2019-10-18"),
+single_day("2020-10-06"),
+single_day("2021-09-26"),
+single_day("2022-09-15"),
+single_day("2023-09-04"),
+single_day("2024-08-23")
+  ))
+
+CAL <- national_calendar(jours_senegal)
+```
+:::
+
+
+
+## Création de régresseurs JO
+
+Le modèle général de correction de jours ouvrables peut s'écrire de la façon suivante :
+$$
+X_t = \sum_{i=1}^{7} \alpha_i N_{it} + \varepsilon_t
+$$
+Avec : 
+
+- $N_{it}$ le nombre de jours de lundis ($i=1$), ..., dimanches et jours fériés ($i=7$)
+
+- $\alpha_i$ l'effet d'un jour de type $i$
+
+Pour éviter les problèmes de multi-colinéarité, on réécrit le modèle en utilisant une modalité de référence (ici dimanche). On désaisonnalise également les régresseurs en enlevant la moyenne de long-terme :
+$$X_t =  \sum_{i=1}^{6} \beta_i (N_{it} - N_{7t}) + 
+\bar{\alpha} \underbrace{(N_t - \bar{N}_t)}_{LY_t} +  \varepsilon_t$$
+Ce modèle peut être simplifié si en faisant des hypothèses sur les effets des jours ouvrés :
+
+- L'hypothèse *working days* correspond au cas où l'on suppose que tous les jours de la semaine (lundi à vendredi) ont le même effet ($\alpha_1=\dots=\alpha_5$), les samedis et les dimanches (et jours fériés) ont le même effet ($\alpha_6=\alpha_7$) et sont utilisés en tant que variable de contraste.
+
+- L'hypothèse *trading days* correspond au cas où l'on suppose que tous les jours ont un effet différent et les dimanches (et jours fériés) sont utilisés en tant que variable de constrate.
+
+Sous JDemetra+ on ne peut utiliser que ces deux hypothèses mais `rjd3toolkit` permet de construire d'autres types de JO.
+
+
+De manière plus générale, lorsque l'on utilise une variable de contraste, les régresseurs $CJO_{t,i}$ associé au groupe $i$ est calculé de la façon suivante :
+$$
+CJO_{t,i} = \underbrace{\sum_{j\in\text{groupe }i}N_{jt}}_{
+\text{nb de jours du groupe }i
+} - 
+\frac{\sum_{j\in\text{groupe }i}1}{\sum_{j\in\text{groupe }0}1}
+\times
+\underbrace{\sum_{j\in\text{groupe }0}N_{jt}}_{
+\text{nb de jours du groupe contraste}
+}
+$$
+Dans le cas *working days*, il y a 2 jours dans le groupe contraste (samedi et dimanche, $\sum_{j\in\text{groupe }0}1=2$) et 5 jours dans le groupe 1 (lundi à vendredi, $\sum_{j\in\text{groupe }1}1=5$). 
+Au mois $t$, le régresseurs JO type de jours est donc égal au nombre de jours de la semaine dans le mois, mois $5/2\times$ nombre de jours de week-end.
+
+
+Les régresseurs JO peuvent être créés à partir de 2 fonctions : `htd()` qui permet de les créer à partir d'un calendrier spécifique et `td()`. 
+Dans ces fonctions, le paramètre le plus important est `groups` pour permet de faire des hypothèses sur les jours. 
+C'est un vecteur de longueur 7 (le nombre de jours de la semaine) dont chaque élément indique à quel groupe le jour de la semaine associé correspond. 
+La variable de contraste est associé au groupe 0.  
+Par exemple, `groups = c(1,2,3,4,5,6,0)` correspond au *trading days* et `groups = c(1,1,1,1,1,0,0)` correspond au *working days*.
+
+Par exemple :
+
+```{r}
+groups <- c(1, 2, 3, 4, 5, 6, 0)
+frequency <- 12
+start <- c(2000,1)
+wkd <- calendar_td(CAL, frequency = frequency, start = start, length = 12*35,
+				   groups = groups)
+wkd <- ts(wkd, start = start, frequency = frequency)
+```
+
+
+::: callout-note
+## Exercice
+Comparer le régresseurs JO *working days* créé avec le calendrier sénégalais et celui sans hypothèse sur les jours fériés (fonction `td()`).
+:::
+
+
+::: {.callout-tip collapse="true"}
+## Solution
+```{r}
+groups <- c(1, 1, 1, 1, 1, 0, 0)
+frequency <- 12
+start <- c(2000,1)
+wkd <- calendar_td(CAL, frequency = frequency, start = start, length = 12*35,
+				   groups = groups)
+wkd <- ts(wkd, start = start, frequency = frequency)
+wkd_def <- td(frequency = frequency, start = start, length = 12*35,
+			  groups = groups)
+wkd_def <- ts(wkd_def, start = start, frequency = frequency)
+data <- ts.union(wkd, wkd_def)
+plot(data, col = c("orange","black"),
+	 plot.type = "single")
+```
+:::
+
+
+## Régresseur *leap year*
+
+
+Le régresseur année bissextile (*leap year*), $LY_t$ doit être créé à la main. 
+Il est égal à la différence entre le nombre de jours dans le mois $t$ et le nombre de jours moyens dans le mois $t$, $\bar N_t$. 
+Tous les mois ont le même nombre de jours, sauf le mois de février qui est de 29 jours tous les 4 ans. 
+$\bar N_t$ est donc égal à 30 ou 31 si le mois considéré n'est pas un mois de février (et donc $N_t - \bar N_t=0$) à 28,25 en février^[
+En réalité, la vraie valeur est 28,2425. En effet, une année bissextile est une année divisible par 4 mais pas par 100, sauf si elle est divisible par 400 : 1900 n'était pas une année bissextile mais 2000 l'était !
+].
+$$
+LY_{t} =
+\begin{cases}
+0,75 & \mbox{si } t \mbox{ est un mois de février bissextil } \\
+-0,25 & \mbox{si } t \mbox{ est un mois de février non bissextil } \\
+0 & \mbox{sinon}
+\end{cases}
+$$
+
+
+::: callout-note
+## Exercice
+Créer une fonction `leap_year` qui permet de générer le régresseur *leap year*.
+:::
+
+
+::: {.callout-tip collapse="true"}
+## Solution
+```{r}
+leap_year <- function(start = 1990, end = 2030, frequency = 12){
+	ly <- ts(0, start = start, end = end, frequency = 12)
+	mois_feb <- cycle(ly) == 2
+	annees <- trunc(round(time(ly), 3)) # arrondi car parfois des pbs avec fonction time
+	# On utilise la définition exacte
+	is_ly <- (annees %% 400 == 0) |
+		((annees %% 4 == 0) & (annees %% 100 != 0))
+	ly[mois_feb] <- 28 - 28.2425
+	ly[mois_feb & is_ly] <- 29 - 28.2425
+	# on change si besoin la fréquence
+	stats::aggregate(ly, nfrequency = frequency) 
+}
+leap_year(frequency = 12)
+# ou rjd3toolkit::lp_variable()
+```
+On peut également uiliser la fonction `rjd3toolkit::ts_adjust()` pour préajuster de l'effet année bissextile.
+:::
+
+## Exercice bilan
+
+::: callout-note
+## Exercice
+Créer un objet `regresseurs_JO` qui contiendra tous les jeux de régresseurs plausibles. Par exemple :
+
+- le régresseur *leap year*
+
+- le jeu de régresseur *trading days* (`TD7`, lundi à samedi, dimanche = contraste)
+
+- le jeu de régresseur *working days* (`TD2`, lundi =... = vendredi, samedi=dimanche=contraste)
+
+- le jeu `TD3` : lundi = ... = vendredi, samedi et dimanche = contraste
+
+:::
+
+::: {.callout-tip collapse="true"}
+## Solution
+
+La solution montre comment créer tous les régresseurs de JDemetra+ 3.0.0
+```{r}
+frequency <- 12
+
+gen_calendrier <- function(cal, frequency, start = c(1990, 1), end = c(2030, 1)) {
+	length = (end[1] - start[1]) * frequency + end[2] - start[2]
+	ly <- rjd3toolkit::lp_variable(frequency = frequency, start = start,
+								   length = length)
+	# N'hésitez pas à ajouter les votre !
+	TD7 <- calendar_td(cal, frequency = frequency, start = start, length = length,
+					   groups = c(1, 2, 3, 4, 5, 6, 0))
+	TD4 <- calendar_td(cal, frequency = frequency, start = start, length = length,
+					   groups = c(1, 1, 1, 1, 2, 3, 0))
+	TD3 <- calendar_td(cal, frequency = frequency, start = start, length = length,
+					   groups = c(1, 1, 1, 1, 1, 2, 0))
+	TD3c <- calendar_td(cal, frequency = frequency, start = start, length = length,
+						groups = c(1, 1, 1, 1, 2, 2, 0))
+	TD2 <- calendar_td(cal, frequency = frequency, start = start, length = length,
+					   groups = c(1, 1, 1, 1, 1, 0, 0))
+	TD2c <- calendar_td(cal, frequency = frequency, start = start, length = length,
+						groups = c(1, 1, 1, 1, 1, 1, 0))
+	
+	reg_jo <- ts(cbind(TD2, TD2c, TD3, TD3c, TD4, TD7),
+				 start = start, frequency = frequency)
+	reg_jo <- ts.intersect(reg_jo,
+						   ly)
+	colnames(reg_jo) <- c(
+		"TD2_semaine",
+		"TD2c_lundi_samedi",
+		sprintf("TD3_%s", c("semaine", "samedi")),
+		sprintf("TD3c_%s", c("lundi_jeudi", "vendredi_samedi")),
+		sprintf("TD4_%s", c("lundi_jeudi", "vendredi", "samedi")),
+		sprintf("TD7_%s", c("lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi")),
+		"leap_year")
+	reg_jo
+}
+regresseurs_JO <- gen_calendrier(FR, frequency = 12)
+```
+:::
+
+
+## Effet graduel de Pâques
+
+Prenons l'exemple de la vente de chocolats. 
+Il est assez commun d'offrir des chocolats à Pâques\ : il y a donc une hausse des ventes autour du lundi de Pâques. 
+Toutefois, ces ventes ne se font pas le jour de Pâques mais plusieurs jours avant, et plus on se rapproche du jour J, plus ces ventes sont importantes. 
+C'est ce que l'on appel l'**effet graduel de Pâques**. 
+Sous JDemetra+ on peut définir le nombre de jours avant Pâques pour lequel on considère qu'il y a un effet (`easter_day.duration`, entre 1 et 20) ou laisser ce choix à JDemetra+. 
+
+
+::: callout-note
+## Exercice
+Serait-il pertinent de considérer un effet graduel de Noël dans le modèle Reg-ARIMA ?
+:::
+
+::: {.callout-tip collapse="true"}
+## Solution
+Non car l'effet graduel de Noël est en fait saisonnier car c'est un jour fixe ! 
+Pour Pâques, comme c'est une fête mobile, les jours précédents peuvent être dans des mois différents en fonction de l'année considérée. 
+Je ne suis pas entré dans les détails mais le régresseur utilisé pour la correction de l'effet graduel de Pâques est désaisonnalisé pour ne prendre en compte que l'effet voulu
+:::
+
+Le régresseur associé à l'effet graduel de Pâques peut être généré en utilisant la fonction `rjd3toolkit::easter_variable()`.
+
+# Utilisation des régresseurs dans la V3 {#sec-rjd2}
+
+Dans la V3 de RJDemetra, pour utiliser nos régresseurs jours ouvrables personnalisés, il faut :
+
+1. créer sa propre spécification (fonctions `rjd3x13::x13_spec()` ou `rjd3x13::regarima_spec`)
+
+2. ajouter les régresseurs dans le contexte grâce au paramètre `context` de `rjd3x13::x13()` et avec la fonction `rjd3toolkit::modelling_context()`
+
+3. modifier la spécification avec la fonction `rjd3toolkit::set_tradingdays()`.
+
+
+```{r}
+ipi_fr <- RJDemetra::ipi_c_eu[, "FR"]
+ctxt <- rjd3toolkit::modelling_context(
+	# on crée un groupe de variables "cjo" contenant les régresseurs
+	variables = list(cjo = regresseurs_JO)
+) 
+
+spec1_jd3 <- rjd3x13::spec_regarima("rg5c") |> 
+	rjd3toolkit::set_tradingdays(
+		option = "UserDefined",
+		uservariable = paste0("cjo.", c(grep("TD7", colnames(regresseurs_JO), value = TRUE),
+										"leap_year"))
+	)
+reg1_jd3 <- rjd3x13::regarima(ipi_fr, spec1_jd3, ctxt)
+summary(reg1_jd3)
+```
+
+Une autre façon de faire est d'ajouter le calendrier du Sénégal comme calendrier par défaut, ce qui permet de garder les options de JDemetra+ comme le préajustement de l'effet *leap-year* ou la sélection automatique des jeux de régresseurs.
+
+
+```{r}
+ctxt <- rjd3toolkit::modelling_context(
+	# on appelle "FR" le calendrier francais
+  # Remplacer ici par votre calendrier
+	calendars = list(FR = FR), 
+	# on crée un groupe de variables "cjo" contenant les régresseurs
+	variables = list(cjo = regresseurs_JO)
+) 
+
+spec2_jd3 <- rjd3x13::spec_regarima("rg5c") |> 
+	rjd3toolkit::set_tradingdays(
+		calendar.name = "FR"
+	)
+reg2_jd3 <- rjd3x13::regarima(ipi_fr, spec2_jd3, ctxt)
+summary(reg2_jd3)
+```
+
+<!-- ::: callout-note -->
+<!-- ## Exercice -->
+<!-- Pourquoi les deux modèles sont différents ? -->
+<!-- ::: -->
+
+
+<!-- ::: {.callout-tip collapse="true"} -->
+<!-- ## Solution -->
+<!-- Le modèle étant multiplicatif, la série est pré-ajustée de l'effet année bissextile, ce qui fait que le régresseur n'est pas utilisé ! -->
+<!-- ::: -->
+
+Pour faire des tests multiples sur les régresseurs jours ouvrables, on peut utiliser la fonction `car::linearHypothesis()`. 
+Dans le modèle précédent, il parait clair que les régresseurs jours ouvrables sont significatifs. 
+Toutefois, on peut se demander, si par parcimonie on peut simplifier le modèle en regroupant les jours de la semaine :
+
+```{r}
+library(car)
+linearHypothesis(reg2_jd3,
+				 c("monday", "tuesday", "wednesday", "thursday", "friday", "saturday"),
+				 c(0, 0, 0, 0, 0, 0), test = "F")
+```
+
+
+
+# Test de la présence de jours ouvrables résiduels
+
+Un point important lorsque le fait de la correction de jours ouvrables est de tester s'il reste un effet jour ouvrable après la correction.
+La fonction `rjd3toolkit::td_f()` peut aider à le faire.
+
+Généralement ce test est effectué après la décomposition, sur la composante désaisonnalisée ou sur l'irrégulier. 
+Plutôt que la fonction `regarima` on va utiliser la fonction `x13` qui effectue la décomposition sur la série linéarisée. 
+Ces tests sont disponibles dans le sous-objet `.$diagnostics` (`"f-test on sa (td)"` et `"f-test on i (td)"`) :
+
+```{r}
+myspec1_sa <- x13_spec(spec = "RSA5c",
+					   usrdef.varEnabled = TRUE,
+					   usrdef.var = wkd,
+					   usrdef.varType = "Calendar",
+					   easter.enabled = FALSE)
+mysa <- x13(ipi_fr, myspec1_sa)
+# On retrouve d'ailleurs la partie regarima
+# summary(mysa$regarima)
+mysa$diagnostics
+```
+
+Sous JDemetra+, les tests affichés portent sur les 8 dernières années et dans RJDemetra sur la série entière ! Pour reproduire les résultats de JDemetra+, utiliser la fonction `rjd3toolkit::td_f()`. 
+Pour le test, six spécifications différentes sont possibles :
+
+1. Par défaut sous JDemetra+ et `model = "R100"` sous `rjd3toolkit`
+$$
+y_t=c + \alpha y_{t-1} + \sum_{i=1}^{6} \beta_i (N_{it} - N_{7t}) +  \varepsilon_t
+$$
+
+2. `model = "D1"` 
+$$
+\Delta y_t - \overline{\Delta y}  =\sum_{i=1}^{6} \beta_i \Delta(N_{it} - N_{7t}) +  \varepsilon_t
+$$
+
+3. `model = "DY"` 
+$$
+\Delta_s y_t - \overline{\Delta_s y}  =\sum_{i=1}^{6} \beta_i \Delta_s(N_{it} - N_{7t}) +  \varepsilon_t
+$$
+
+4. `model = "D1DY"` 
+$$
+\Delta_s \Delta y_t - \overline{\Delta_s \Delta y}  =\sum_{i=1}^{6} \beta_i \Delta_s\Delta(N_{it} - N_{7t}) +  \varepsilon_t
+$$
+5. `model = "AIRLINE"`
+$$
+y_t =\sum_{i=1}^{6} \beta_i (N_{it} - N_{7t}) +  \varepsilon_t\text{ avec }\varepsilon_t\sim ARIMA(0,1,1)(0,1,1)
+$$
+
+6. `model = "R011"`
+$$
+y_t =\sum_{i=1}^{6} \beta_i (N_{it} - N_{7t}) +  \varepsilon_t\text{ avec }\varepsilon_t\sim ARIMA(0,1,1)
+$$
+
+7. `model = "WN"`
+$$
+y_t - \bar y =\sum_{i=1}^{6} \beta_i (N_{it} - N_{7t}) +  \varepsilon_t
+$$
+
+avec $y_t$ pris en logarithme si le schéma est multiplicatif. 
+Dans tous les cas $(H_0):\beta_1=\dots = \beta_6=0$ et les régresseurs utilisés ne prennent pas en compte le calendrier personnalisé que l'on a créé !
+
+```{r}
+library(rjd3toolkit)
+sa <- mysa$final$series[,"sa"]
+i <- mysa$final$series[,"i"]
+if (mysa$regarima$model$spec_rslt[,"Log transformation"]) {
+	sa <- log(sa)
+	i <- log(i)
+}
+rjd3toolkit::td_f(sa, nyears = 8, model = "R100")
+rjd3toolkit::td_f(i, nyears = 8, model = "R100")
+# Résultats différents sur l'ensemble de la série
+rjd3toolkit::td_f(sa, nyears = 0, model = "R100")
+rjd3toolkit::td_f(i, nyears = 0, model = "R100")
+```
+
+En réalité les tests affichés dans JDemetra+ et RJDemetra ne sont pas effectuées sur les composantes "finales" de l'irrégulier et la série désaisonnalisée, mais sur les composantes issues de X-11 avant ajout des points atypiques du préajustement.
+Pour X-13-ARIMA ces séries ne sont pas exportées par défaut (et ne sont pas exportables depuis JDemetra+).
+Pour les extraires, nous allons réestimer le modèle^[
+Vous remarquerez que le résultat est différent de celui affiché dans JDemetra+ : cela vient de la méthode d'estimation du test utilisée !
+] :
+
+```{r}
+jmodel <- suppressWarnings(jx13(get_ts(mysa), x13_spec(mysa)))
+
+sa <- get_indicators(jmodel, "decomposition.sa_cmp")[[1]]
+i <- get_indicators(jmodel, "decomposition.i_cmp")[[1]]
+# Pour mettre tous les résultats sous forme de matrice :
+t(simplify2array(
+	list(
+		rjd3toolkit::td_f(sa, nyears = 0, model = "R100"),
+		rjd3toolkit::td_f(sa, nyears = 8, model = "R100"),
+		rjd3toolkit::td_f(i, nyears = 0, model = "R100"),
+		rjd3toolkit::td_f(i, nyears = 8, model = "R100"))
+))
+```
+
+Avec la V3 ces composantes sont directement exportables :
+
+```{r}
+x13_jd3 <- rjd3x13::x13(
+	ipi_fr, 
+	rjd3x13::x13_spec("rsa5c") |> 
+		rjd3toolkit::set_tradingdays(
+			calendar.name = "FR"
+		), 
+	ctxt)
+sa <- x13_jd3$result$decomposition$d11
+i <- x13_jd3$result$decomposition$d13
+sa <- window(sa, start = start(ipi_fr), end = end(ipi_fr))
+i <- window(i, start = start(ipi_fr), end = end(ipi_fr))
+```
+
+En utilisant la fonction `rjd3toolkit::sarima_estimate()` et le package `car`, vous pouvez aussi construire vous-même le test^[
+Vous pouvez également utiliser le code vu dans les sections [-@sec-rjd] et [-@sec-rjd2] pour estimer un modèle automatique.
+] :
+```{r}
+car::linearHypothesis(
+	rjd3toolkit::sarima_estimate(
+		sa,
+		order = c(0, 1, 1),
+		seasonal = c(0, 0, 0),
+		mean = FALSE,
+		xreg = rjd3toolkit::td(s = sa)
+	),
+	c("group_1 = 0", "group_2 = 0", "group_3 = 0", 
+	  "group_4 = 0", "group_5 = 0", "group_6 = 0"),
+	test = "F"
+)
+```
+
+
+Une autre solution est de passer par les objets `jSA` et d'exporter les indicateurs `"diagnostics.td-i-last"` et `"diagnostics.td-sa-last"`, ou bien de rajouter ces indicateurs dans le paramètre `userdefined` de `x13()` :
+
+```{r}
+jsa <- jx13(get_ts(mysa), x13_spec(mysa))
+get_indicators(jsa,"diagnostics.td-sa-last")
+get_indicators(jsa,"diagnostics.td-i-last")
+mysa <- x13(ipi_fr, myspec1_sa, userdefined = c("diagnostics.td-sa-last", "diagnostics.td-i-last"))
+mysa$user_defined$`diagnostics.td-sa-last`
+mysa$user_defined$`diagnostics.td-i-last`
+# # ou :
+# t(simplify2array(
+#   mysa$user_defined
+# ))
+```
+Privilégier plutôt ces deux dernières solutions, cela évite se regarder le schéma de décomposition (mais on ne peut pas personnaliser le test).
+
+
+
+::: callout-note
+## Exercice
+Essayez de corriger l'effet JO résiduel sur cette série.
+:::
+
+::: {.callout-caution collapse="true"}
+## Indice
+La spécification parait bonne, les régresseurs sont tous significatifs mais le modèle ARIMA est estimé sur 30 ans, ce qui peut paraître beaucoup. 
+:::
+
+
+::: {.callout-tip collapse="true"}
+## Solution
+```{r}
+# Une option serait de couper les régresseurs JO en deux
+td_reg_post_2005 <- td_reg_pre_2005  <- 
+	regresseurs_JO[,grep("TD7", colnames(regresseurs_JO))]
+window(td_reg_pre_2005, end = c(2005, 12)) <- 0
+window(td_reg_post_2005, start = c(2005, 1)) <- 0
+wkd2 <- ts.union(td_reg_pre_2005, td_reg_post_2005,
+				 leap_year(frequency = 12))
+colnames(wkd2) <- c(paste0(c("lundi","mardi","mercredi","jeudi","vendredi",
+							 "samedi"),"_av2005"),
+					paste0(c("lundi","mardi","mercredi","jeudi","vendredi",
+							 "samedi"),"_ap2005"),"leap_year")
+
+myspec2_sa <- x13_spec(spec = "RSA5c",
+					   usrdef.varEnabled = TRUE,
+					   usrdef.var = wkd2,
+					   usrdef.varType = "Calendar",
+					   easter.enabled = FALSE)
+mysa2 <- x13(ipi_fr, myspec2_sa,
+			 userdefined = c("diagnostics.td-sa-last", "diagnostics.td-i-last"))
+summary(mysa2$regarima)
+t(simplify2array(
+	mysa2$user_defined
+))
+```
+:::
+
+
+# Utilisation des régresseurs dans `RJDemetra` {#sec-rjd}
+
+Dans `RJDemetra`, pour utiliser nos régresseurs jours ouvrables personnalisés, il faut créer sa propre spécification (fonctions `x13_spec()` ou `regarima_spec_x13()`) en utilisant l'option `usrdef.varEnabled = TRUE`, en spécifiant les régresseurs dans `usrdef.var` et indiquant que les régresseurs sont des régresseurs calendaires avec l'option `usrdef.varType = "Calendar"`. 
+Par exemple : 
+
+```{r}
+library(RJDemetra)
+ipi_fr <- ipi_c_eu[, "FR"]
+# On arrête la série en décembre 2019 pour éviter les changements de résultats
+# liés aux futures actualisation des données de RJDemetra
+ipi_fr <- window(ipi_fr, end = c(2019, 12))
+# on garde le jeu reg6
+wkd <- regresseurs_JO[,c(grep("TD7", colnames(regresseurs_JO), value = TRUE),
+						 "leap_year")]
+# Pour simplifier l'output, on enlève le "TD7_"
+# mais ce n'est pas obligatoire
+colnames(wkd) <- gsub("TD7_", "", colnames(wkd))
+myspec1 <- regarima_spec_x13(spec = "RG5c",
+							 usrdef.varEnabled = TRUE,
+							 usrdef.var = wkd,
+							 usrdef.varType = "Calendar",
+							 easter.enabled = FALSE)
+myreg1 <- regarima(ipi_fr, myspec1)
+summary(myreg1)
+```
+
+::: {.callout-warning}
+## Pour information
+Pour ne pas repartir de zéro et avoir des modèles, il y a sous JDemetra+ 13 spécifications pré-définies décrites [ici](/PDF/Predefined_specifications.pdf) ou dans l'aide des fonction RJDemetra associés (`?regarima`, `?x13` ou `?tramoseats`).
+:::
+
+Pour faire des tests multiples sur les régresseurs jours ouvrables, on peut utiliser la fonction `car::linearHypothesis()`. 
+Dans le modèle précédent, il parait clair que les régresseurs jours ouvrables sont significatifs. 
+Toutefois, on peut se demander, si par parcimonie on peut simplifier le modèle en regroupant les jours de la semaine :
+
+```{r}
+library(car)
+linearHypothesis(myreg1,
+				 c("lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"),
+				 c(0, 0, 0, 0, 0, 0), test = "F")
+linearHypothesis(myreg1,
+				 c("lundi = mardi","mardi = mercredi","mercredi = jeudi","jeudi = vendredi"), test = "F")
+```
+
+
+::: callout-note
+## Exercice
+Essayez maintenant sur vos propres séries.
+Tester de laisser ou non l'effet graduel de Pâques (`easter.enabled = TRUE`).
+:::
+
+

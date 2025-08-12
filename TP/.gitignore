@@ -3,5 +3,9 @@ Etude_de_cas
 ws_prod.xml
 ws_prod
 data_ws_prod.*
+macronia*
 *_cache
 *_files
+.DS_Store
+JD_*.html
+R_*.html
