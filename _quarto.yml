@@ -13,7 +13,7 @@ website:
   description: "{{< var description >}}"
   # site-url : pour sitemap.xml
   # Penser à également modifier le fichier robots.txt
-  site-url: "https://aqlt.github.io/formation.2025.cvs"
+  site-url: "https://aqlt.github.io/atelier.cvs.2025"
   favicon: img/favicon.ico
   google-analytics:
     tracking-id: "G-X652XRGDPL"
