@@ -39,7 +39,7 @@ Vous pouvez retrouver [ici](manuel_installation.qmd) le manuel d'installation de
 
 1.  [R et JDemetra+](TP/R_1_R_et_JD.qmd)
 
-2.  [Correction des jours ouvrables](TP/R_2_CJO.qmd)
+2.  [Correction des jours ouvrables](TP/R_2_CJO.qmd) et programme [export_cjo.R](ex-cjo/export_cjo.R)
 
 3.  [(Complément) Preajustement](TP/R_3_Preadjustment.qmd)
 
