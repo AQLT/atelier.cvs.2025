@@ -411,9 +411,9 @@ ctxt <- rjd3toolkit::modelling_context(
 					 cjo_trim = regresseurs_JO_trim)
 ) 
 
-jws <- rjd3workspace::.jws_new(ctxt)
+jws <- rjd3workspace::jws_new(ctxt)
 # On peut également ajouter les calendriers et les variables avec les fonctions :
-# rjd3workspace:::add_variable()
+# rjd3workspace:::add_variables()
 # rjd3workspace:::add_calendar()
 # Pour modifier un workspace existant :
 # rjd3workspace::set_context()

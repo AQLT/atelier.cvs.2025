@@ -170,10 +170,6 @@ jours_senegal <- list(
 #   )
 # })),
 #   sep= ",\n")
-# cat(sprintf(
-#   'single_day("%s"), # %s',
-#   all_dates$date, all_dates$holiday),
-#   sep= "\n")
 
 jours_senegal <- c(
   jours_senegal,
