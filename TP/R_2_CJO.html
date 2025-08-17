@@ -447,13 +447,13 @@ Solution
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>CAL <span class="ot">&lt;-</span> <span class="fu">national_calendar</span>(FR)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ol start="2" type="1">
-<li>Calendrier associé au Sénégal, la difficulté étant qu’il faut ajouter à la main des jours associés aux fêtes musulmanes</li>
+<li>Calendrier associé à la Macronia, la difficulté étant qu’il faut ajouter à la main des jours associés aux fêtes musulmanes</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>jours_senegal <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>jours_macronia <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">special_day</span>(<span class="st">"NEWYEAR"</span>),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">special_day</span>(<span class="st">"EASTERMONDAY"</span>), <span class="co"># Lundi de Pâques</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed_day</span>(<span class="dv">4</span>, <span class="dv">4</span>), <span class="co"># Jour de l'indépendance du Sénégal</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed_day</span>(<span class="dv">4</span>, <span class="dv">4</span>), <span class="co"># Jour de l'indépendance de la Macronia</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">special_day</span>(<span class="st">"MAYDAY"</span>), <span class="co"># 1er mai</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">special_day</span>(<span class="st">"ASCENSION"</span>), <span class="co"># Jour de l'Ascension</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">special_day</span>(<span class="st">"WHITMONDAY"</span>), <span class="co"># Lundi de Pentecôte</span></span>
@@ -463,7 +463,7 @@ Solution
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># # Manque Début ramadan, Korité (Aïd al-Fitr), Tabaski (Aïd el-Kébir), Tamkharite, Magal de Touba (non officiel), Maouloud et jours décrétés</span></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># # On récupère ces jours construisant un fichier Excel</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># jours_mobiles &lt;- readxl::read_excel("DataCVS/DateFetesMusulmanes_Senegal.xlsx") |&gt;</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># jours_mobiles &lt;- readxl::read_excel("ex-cjo/DateFetesMusulmanes_Macronia.xlsx") |&gt;</span></span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">#   as.data.frame()</span></span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co"># jours_mobiles &lt;- jours_mobiles[,-1] #on enlève l'année</span></span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co"># jours_mobiles &lt;- lapply(jours_mobiles, function(x){</span></span>
@@ -477,8 +477,8 @@ Solution
 <span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co"># })),</span></span>
 <span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">#   sep= ",\n")</span></span>
 <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>jours_senegal <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  jours_senegal,</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>jours_macronia <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  jours_macronia,</span>
 <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
 <span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># DEBUT_RAMADAN,</span></span>
 <span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="fu">single_day</span>(<span class="st">"1990-03-28"</span>),</span>
@@ -704,7 +704,7 @@ Solution
 <span id="cb10-252"><a href="#cb10-252" aria-hidden="true" tabindex="-1"></a><span class="fu">single_day</span>(<span class="st">"2024-08-23"</span>)</span>
 <span id="cb10-253"><a href="#cb10-253" aria-hidden="true" tabindex="-1"></a>  ))</span>
 <span id="cb10-254"><a href="#cb10-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-255"><a href="#cb10-255" aria-hidden="true" tabindex="-1"></a>CAL <span class="ot">&lt;-</span> <span class="fu">national_calendar</span>(jours_senegal)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-255"><a href="#cb10-255" aria-hidden="true" tabindex="-1"></a>CAL <span class="ot">&lt;-</span> <span class="fu">national_calendar</span>(jours_macronia)</span></code><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -757,7 +757,7 @@ Exercice
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Comparer le régresseurs JO <em>working days</em> créé avec le calendrier sénégalais et celui sans hypothèse sur les jours fériés (fonction <code>td()</code>).</p>
+<p>Comparer le régresseurs JO <em>working days</em> créé avec personnalisé et celui sans hypothèse sur les jours fériés (fonction <code>td()</code>).</p>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -1106,7 +1106,7 @@ Standard error of the regression (ML estimate): 1.844427
 AIC: 1493.077, AICc: 1494.476, BIC: 1551.326</code></pre>
 </div>
 </div>
-<p>Une autre façon de faire est d’ajouter le calendrier du Sénégal comme calendrier par défaut, ce qui permet de garder les options de JDemetra+ comme le préajustement de l’effet <em>leap-year</em> ou la sélection automatique des jeux de régresseurs.</p>
+<p>Une autre façon de faire est d’ajouter le calendrier du personnalisé comme calendrier par défaut, ce qui permet de garder les options de JDemetra+ comme le préajustement de l’effet <em>leap-year</em> ou la sélection automatique des jeux de régresseurs.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>ctxt <span class="ot">&lt;-</span> rjd3toolkit<span class="sc">::</span><span class="fu">modelling_context</span>(</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># on appelle "FR" le calendrier francais</span></span>

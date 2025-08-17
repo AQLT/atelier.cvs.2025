@@ -79,10 +79,10 @@ complete_variables <- function(liste_var, workspace){
 # Par exemple :
 library(rjd3toolkit)
 
-jours_senegal <- list(
+jours_macronia <- list(
   special_day("NEWYEAR"),
   special_day("EASTERMONDAY"), # Lundi de Pâques
-  fixed_day(4, 4), # Jour de l'indépendance du Sénégal
+  fixed_day(4, 4), # Jour de l'indépendance de la Macronia
   special_day("MAYDAY"), # 1er mai
   special_day("ASCENSION"), # Jour de l'Ascension
   special_day("WHITMONDAY"), # Lundi de Pentecôte
@@ -92,7 +92,7 @@ jours_senegal <- list(
 )
 # # Manque Début ramadan, Korité (Aïd al-Fitr), Tabaski (Aïd el-Kébir), Tamkharite, Magal de Touba (non officiel), Maouloud et jours décrétés
 # # On récupère ces jours construisant un fichier Excel
-# jours_mobiles <- readxl::read_excel("ex-cjo/DateFetesMusulmanes_Senegal.xlsx") |>
+# jours_mobiles <- readxl::read_excel("ex-cjo/DateFetesMusulmanes_Macronia.xlsx") |>
 #   as.data.frame()
 # jours_mobiles <- jours_mobiles[,-1] #on enlève l'année
 # jours_mobiles <- lapply(jours_mobiles, function(x){
@@ -105,8 +105,8 @@ jours_senegal <- list(
 #   )
 # })),
 #   sep= ",\n")
-jours_senegal <- c(
-  jours_senegal,
+jours_macronia <- c(
+  jours_macronia,
   list(
     # DEBUT_RAMADAN,
     single_day("1990-03-28"),
@@ -332,7 +332,7 @@ jours_senegal <- c(
     single_day("2024-08-23")
   ))
 
-CAL <- national_calendar(jours_senegal)
+CAL <- national_calendar(jours_macronia)
 frequency <- 4
 start <- c(1990,1)
 end = c(2030, 1)

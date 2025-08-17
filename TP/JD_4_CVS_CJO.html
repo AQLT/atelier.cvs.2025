@@ -250,11 +250,11 @@ gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">special_day</span>(<span class="st">"ARMISTICE"</span>)</span>
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>))</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Exemple de calendrier associé au Sénégal</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>jours_senegal <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Exemple de calendrier associé à la Macronia</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>jours_macronia <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">special_day</span>(<span class="st">"NEWYEAR"</span>),</span>
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">special_day</span>(<span class="st">"EASTERMONDAY"</span>), <span class="co"># Lundi de Pâques</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed_day</span>(<span class="dv">4</span>, <span class="dv">4</span>), <span class="co"># Jour de l'indépendance du Sénégal</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fixed_day</span>(<span class="dv">4</span>, <span class="dv">4</span>), <span class="co"># Jour de l'indépendance de la Macronia</span></span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">special_day</span>(<span class="st">"MAYDAY"</span>), <span class="co"># 1er mai</span></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">special_day</span>(<span class="st">"ASCENSION"</span>), <span class="co"># Jour de l'Ascension</span></span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">special_day</span>(<span class="st">"WHITMONDAY"</span>), <span class="co"># Lundi de Pentecôte</span></span>
@@ -262,8 +262,8 @@ gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">special_day</span>(<span class="st">"ALLSAINTSDAY"</span>), <span class="co"># Toussaint</span></span>
 <span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">special_day</span>(<span class="st">"CHRISTMAS"</span>) <span class="co"># Noël</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>jours_senegal <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  jours_senegal,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>jours_macronia <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>  jours_macronia,</span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># DEBUT_RAMADAN,</span></span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="fu">single_day</span>(<span class="st">"1990-03-28"</span>),</span>
@@ -489,7 +489,7 @@ gtag('config', 'G-X652XRGDPL', { 'anonymize_ip': true});
 <span id="cb1-255"><a href="#cb1-255" aria-hidden="true" tabindex="-1"></a><span class="fu">single_day</span>(<span class="st">"2024-08-23"</span>)</span>
 <span id="cb1-256"><a href="#cb1-256" aria-hidden="true" tabindex="-1"></a>  ))</span>
 <span id="cb1-257"><a href="#cb1-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>CAL <span class="ot">&lt;-</span> <span class="fu">national_calendar</span>(jours_senegal)</span>
+<span id="cb1-258"><a href="#cb1-258" aria-hidden="true" tabindex="-1"></a>CAL <span class="ot">&lt;-</span> <span class="fu">national_calendar</span>(jours_macronia)</span>
 <span id="cb1-259"><a href="#cb1-259" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-260"><a href="#cb1-260" aria-hidden="true" tabindex="-1"></a>gen_calendrier <span class="ot">&lt;-</span> <span class="cf">function</span>(cal, frequency, <span class="at">start =</span> <span class="fu">c</span>(<span class="dv">1990</span>, <span class="dv">1</span>), <span class="at">end =</span> <span class="fu">c</span>(<span class="dv">2030</span>, <span class="dv">1</span>)) {</span>
 <span id="cb1-261"><a href="#cb1-261" aria-hidden="true" tabindex="-1"></a>    length <span class="ot">=</span> (end[<span class="dv">1</span>] <span class="sc">-</span> start[<span class="dv">1</span>]) <span class="sc">*</span> frequency <span class="sc">+</span> end[<span class="dv">2</span>] <span class="sc">-</span> start[<span class="dv">2</span>]</span>
