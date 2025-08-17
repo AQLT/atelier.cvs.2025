@@ -9,7 +9,7 @@ project:
     - "robots.txt"
 
 website:
-  title: "{{< var titre.website >}}"
+  title: "Atelier CVS 2025"
   description: "{{< var description >}}"
   # site-url : pour sitemap.xml
   # Penser à également modifier le fichier robots.txt
