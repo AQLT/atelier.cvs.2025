@@ -63,11 +63,11 @@ FR <- national_calendar(list(
 	special_day("ARMISTICE")
 ))
 
-# Exemple de calendrier associé au Sénégal
-jours_senegal <- list(
+# Exemple de calendrier associé à la Macronia
+jours_macronia <- list(
   special_day("NEWYEAR"),
 	special_day("EASTERMONDAY"), # Lundi de Pâques
-  fixed_day(4, 4), # Jour de l'indépendance du Sénégal
+  fixed_day(4, 4), # Jour de l'indépendance de la Macronia
   special_day("MAYDAY"), # 1er mai
   special_day("ASCENSION"), # Jour de l'Ascension
 	special_day("WHITMONDAY"), # Lundi de Pentecôte
@@ -75,8 +75,8 @@ jours_senegal <- list(
 	special_day("ALLSAINTSDAY"), # Toussaint
   special_day("CHRISTMAS") # Noël
 )
-jours_senegal <- c(
-  jours_senegal,
+jours_macronia <- c(
+  jours_macronia,
   list(
     # DEBUT_RAMADAN,
 single_day("1990-03-28"),
@@ -302,7 +302,7 @@ single_day("2023-09-04"),
 single_day("2024-08-23")
   ))
 
-CAL <- national_calendar(jours_senegal)
+CAL <- national_calendar(jours_macronia)
 
 gen_calendrier <- function(cal, frequency, start = c(1990, 1), end = c(2030, 1)) {
 	length = (end[1] - start[1]) * frequency + end[2] - start[2]

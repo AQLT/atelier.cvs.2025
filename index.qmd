@@ -82,7 +82,7 @@ cat(sprintf("- [%s](PDF/%s)", all_f_pdf, all_f_pdf),
 	sep = "\n")
 ```
 
-- Workspace et données associées à la Macronie\ : [macronia.zip](data/macronia.zip)
+- Workspace et données associées à la Macronia\ : [macronia.zip](data/macronia.zip)
 - Jeu de régresseur JO (pour la V2, voir [TP2 - Correction des jours ouvrables](TP/R_2_CJO.qmd))\ :  [regcjo.xlsx](data/regcjo.xlsx)
 - Description des M-statistiques\ : [Description_statsM.pdf](PDF/Description_statsM.pdf)
 - Description des objets exportables depuis JDemetra+ (V2) : [output_jd.pdf](PDF/output_jd.pdf)
