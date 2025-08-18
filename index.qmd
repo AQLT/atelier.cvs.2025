@@ -16,7 +16,7 @@ Vous pouvez retrouver [ici](manuel_installation.qmd) le manuel d'installation de
 
 2.  [Introduction R](Cours/02a_Intro_R.pdf) et  [R et JDemetra+](Cours/02b_R_et_JD.pdf)
 
-3.  [Exploration des séries et décomposition](Cours/03_Exploration_series.pdf)
+3.  [(Complément) Exploration des séries et décomposition](Cours/03_Exploration_series.pdf)
 
 4.  [Methode X13-ARIMA](Cours/04_Methode_X13-ARIMA.pdf)
 
