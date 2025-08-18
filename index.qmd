@@ -18,7 +18,7 @@ Vous pouvez retrouver [ici](manuel_installation.qmd) le manuel d'installation de
 
 3.  [(Complément) Exploration des séries et décomposition](Cours/03_Exploration_series.pdf)
 
-4.  [Methode X13-ARIMA](Cours/04_Methode_X13-ARIMA.pdf)
+4.  [Methode X13-ARIMA](Cours/04_Methode_X13-ARIMA.pdf) et programme [exemple_x11_mens.R](R-macronia/exemple_x11_mens.R)
 
 5.  [La correction des effets de calendrier](Cours/05_CJO.pdf)
 
