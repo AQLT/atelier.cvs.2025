@@ -21,6 +21,8 @@ new_file_workspace <- sprintf(
   format(Sys.time(), # je récupère la date du jour
          "%m_%Y") # je la mets sous le format MM_YYYY
 )
+# Si plus simple mettre directement le nom du fichier :
+new_file_workspace <- "R-macronia/macronia_08_2025.xml"
 
 rjd3workspace::save_workspace(jws, new_file_workspace, replace = TRUE)
 cruncher(workspace = new_file_workspace,
