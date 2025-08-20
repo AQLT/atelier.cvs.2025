@@ -4,7 +4,8 @@ date: 08/18/2025
 date-format: "MMM YYYY"
 ---
 
-Supports de cours et exercices du séminaire régional sur la correction des variations saisonnières avec R et JDemetra+ du 18 au 22 août 2025.
+Supports de cours et exercices du séminaire régional en statistiques du secteur réel sur la correction des variations saisonnières dans les États membre de l'AFRITAC de l'Ouest (AFW), du 18 au 22 août 2025 à Dakar, Sénégal.
+
 
 # {{< fa plug-circle-check >}} Installation du logiciel
 
