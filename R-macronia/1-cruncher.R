@@ -5,9 +5,9 @@ if (length(packages_a_installer) > 0) {
 }
 library(rjwsacruncher)
 create_param_file(
-  dir_file_param = "R-macronia",
-  policy = "lastoutliers",
-  csv_layout = "vtable"
+  dir_file_param = "R-macronia", # dossier où le fichier de paramètres sera créé
+  policy = "lastoutliers", # politique de rafraichissement
+  csv_layout = "vtable" # format d'export des fichiers CSV
 )
 # Il faut spécifier où est le JWSACruncher
 options(cruncher_bin_directory = "/Applications/jwsacruncher/jwsacruncher-3.5.1/bin")
@@ -21,6 +21,8 @@ new_file_workspace <- sprintf(
   format(Sys.time(), # je récupère la date du jour
          "%m_%Y") # je la mets sous le format MM_YYYY
 )
+# Si plus simple mettre directement le nom du fichier :
+new_file_workspace <- "R-macronia/macronia_08_2025.xml"
 
 rjd3workspace::save_workspace(jws, new_file_workspace, replace = TRUE)
 cruncher(workspace = new_file_workspace,
