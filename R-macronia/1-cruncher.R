@@ -5,9 +5,9 @@ if (length(packages_a_installer) > 0) {
 }
 library(rjwsacruncher)
 create_param_file(
-  dir_file_param = "R-macronia",
-  policy = "lastoutliers",
-  csv_layout = "vtable"
+  dir_file_param = "R-macronia", # dossier où le fichier de paramètres sera créé
+  policy = "lastoutliers", # politique de rafraichissement
+  csv_layout = "vtable" # format d'export des fichiers CSV
 )
 # Il faut spécifier où est le JWSACruncher
 options(cruncher_bin_directory = "/Applications/jwsacruncher/jwsacruncher-3.5.1/bin")
