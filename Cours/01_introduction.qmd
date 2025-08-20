@@ -10,6 +10,8 @@ format:
 #| label: setup
 #| include: false
 knitr::opts_chunk$set(echo = FALSE)
+library(forecast)
+library(ggplot2)
 if (!file.exists("img/ipi_cl1.RDS")) {
 	data <- AQLTools::lectureBDM("010537939", "010537940")
 	saveRDS(data, "img/ipi_cl1.RDS")	
@@ -36,14 +38,12 @@ AQLTools::graph_ts(data, titre = "IPI dans l'automobile",
 Qu'est-ce qu'un phénomène saisonnier ?
 
 
-Comment le modéliser ?
-
-
-
 Quelles sont les causes de la saisonnalité ?
 
 
 Pourquoi désaisonnaliser ?
+
+Faut-il toujours désaisonnaliser ?
 
 
 
@@ -88,7 +88,7 @@ Exemples : fête de Noël sur la consommation, calendrier scolaire sur le touris
 Exemples : industrie alimentaire dépend du secteur agricole, fabrication de jouets dépend des commerces de détail
 
 
-### Pourquoi désaisonnaliser ?
+### Pourquoi désaisonnaliser ? (1/2)
 
 Objectif : analyser une série temporelle (direction, points de retournement, liens avec autres séries, etc.)
 
@@ -100,11 +100,62 @@ Objectif : analyser une série temporelle (direction, points de retournement, li
 
 . . .
 
- Faut-il toujours désaisonnaliser ?
+Faut-il toujours désaisonnaliser ?
 
 . . .
 
 Parfois, la série brute est la série d'intérêt (ex : IPC)
+
+### Pourquoi désaisonnaliser ? (2/2)
+
+Pourquoi ne peut-on pas de contenter de l'analyse en glissement brut ?
+
+. . .
+
+- Ne prend pas en compte les effets jours ouvrables
+
+. . .
+
+- Ne prend pas en compte les effets fêtes mobiles
+
+. . .
+
+- Points de retournement détectés avec retard
+
+```{r}
+#| fig-height: 4
+data <- log(ts(c(
+  seq(1, length.out = 12, by = 2),
+  seq(22.8, length.out = 24, by = -0.2)
+), start = 2000, frequency = 12)
+)
+data_ga <- diff(data, 12) / stats::lag(data, -12)
+retournement_ga <- time(data_ga)[which(data_ga<0)[1] - 1]
+autoplot(data) +
+  theme_minimal() +
+  labs(x = NULL, y = NULL) +
+  ggplot2::geom_vline(
+    xintercept = 2001 - 1/12,
+    linetype = "dotted"
+      )  +
+  ggplot2::geom_vline(
+    xintercept = retournement_ga,
+    linetype = "dotted"
+  ) +
+  geom_text(
+    data = data.frame(
+      x = c(2001 - 1/12, retournement_ga),
+      y = c(1, 1),
+      label = c("Retournement", "Retournement avec GA")
+    ),
+    aes(x =x, y = y,label = label),
+    vjust = 1,
+    angle=90,inherit.aes = FALSE,
+    size = 4
+  )
+```
+
+
 
 ### Un premier modèle pour la saisonnalité {.smaller}
 

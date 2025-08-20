@@ -176,12 +176,50 @@ Pourquoi ? Car fort enjeu, très regardée par les utilisateurs
 
 Que fait-on ?  
 
+- Mise à jour des séries CVS-CJO avec les nouveaux points selon une politique de rafraîchissement
+
 - Valider l'apparition ou la disparition d'outliers sur la fin de série  
 
 - Fixer un éventuel outlier non détecté par JDemetra+  
 
 - Surveiller les révisions de la série CVS-CJO sur la fin de série  
   L'ajout d'un nouveau point a-t-il entraîné de fortes révisions ?
+  
+### Les différentes options de rafraîchissement
+
++ Méthode current : les paramètres du modèle sont identifiés et estimés une fois par an, les coefficients saisonniers sont projetés et figés jusqu'à la prochaine campagne annuelle.  
+
++ Méthode concurrent : les paramètres sont ré-identifiés et ré-estimés à chaque nouveau point
+
++ \highlightbf{Méthode partial-concurrent} : les paramètres du modèle sont identifiés une fois par an mais on les ré-estime à chaque nouveau point.   
+{{< fa arrow-circle-right >}} voir [refresh_policies](https://AQLT.github.io/{{< var repo-github >}}/PDF/refresh_policies.pdf)
+
+Recommandation : recherche d'outliers sur la dernière année
+
+
+### Différences entre les campagnes annuelles et infra-annuelles
+
+\begin{table}[htbp]
+\footnotesize
+  \small
+    \begin{tabular}{|m{1cm}|m{2.3cm}|m{8em}|m{9em}|}
+    \hline
+    \multicolumn{2}{|c|}{Spécifications} & Campagnes \hspace{1cm} annuelles  & Campagnes infra-annuelles  \\
+    \hline
+    \multicolumn{2}{|m{4cm}|}{Schéma de décomposition} & Peut être modifié & Inchangé \\
+    \hline
+    \multirow{3}[6]{1cm}{Modèle Reg-ARIMA} & Modèle ARIMA &-- Ré-identifié \newline{}-- ré-estimé &-- Inchangé\newline{} Ré-estimé \\
+\cline{2-4}          & Jeu de régresseurs JO &-- Peut être modifié\newline{}-- Ré-estimé &-- Inchangé\newline{}-- Ré-estimé \\
+\cline{2-4}          & Outliers & -- Détection sur toute la série\newline{}-- Ré-estimé &-- Détection sur la dernière année\newline{}-- Ré-estimé \\
+    \hline
+    \multirow{2}{1cm}{X11} & Filtre saisonnier & Peut être modifié & Inchangé (en théorie mais pas en pratique) \\
+\cline{2-4}          & Moyenne mobile de Henderson & Peut être modifié & Inchangé  (en théorie mais pas en pratique) \\
+    \hline
+    \end{tabular}
+\end{table}
+
+Méthode de rafraîchissement recommandée pour les campagnes infra-annuelles : *Partial concurrent adjustment > Last outliers*
+
 
 ## Plusieurs points à surveiller
 ### Des points de vigilance (1/2)
@@ -229,18 +267,6 @@ Surveiller les révisions sur la fin de série :
 
 Rappel : si Henderson 13 et $M3\times 5$, filtre symétrique utilise 84 points dans le passé et dans le futur !
 
-## Options de rafraîchissement
-
-### Les différentes options de rafraîchissement
-
-+ Méthode current : les paramètres du modèle sont identifiés et estimés une fois par an, les coefficients saisonniers sont projetés et figés jusqu'à la prochaine campagne annuelle.  
-
-+ Méthode concurrent : les paramètres sont ré-identifiés et ré-estimés à chaque nouveau point
-
-+ \highlightbf{Méthode partial-concurrent} : les paramètres du modèle sont identifiés une fois par an mais on les ré-estime à chaque nouveau point.   
-{{< fa arrow-circle-right >}} voir [refresh_policies](https://AQLT.github.io/{{< var repo-github >}}/PDF/refresh_policies.pdf)
-
-Recommandation : recherche d'outliers sur la dernière année
 
 ### Faut-il réviser sur l'ensemble de la période ?
 
@@ -261,30 +287,6 @@ Option **acceptable** :  réviser sur l'ensemble de la série
 
 # Conclusion
 
-### Différences entre les campagnes annuelles et infra-annuelles
-
-\begin{table}[htbp]
-\footnotesize
-  \small
-    \begin{tabular}{|m{1cm}|m{2.3cm}|m{8em}|m{9em}|}
-    \hline
-    \multicolumn{2}{|c|}{Spécifications} & Campagnes \hspace{1cm} annuelles  & Campagnes infra-annuelles  \\
-    \hline
-    \multicolumn{2}{|m{4cm}|}{Schéma de décomposition} & Peut être modifié & Inchangé \\
-    \hline
-    \multirow{3}[6]{1cm}{Modèle Reg-ARIMA} & Modèle ARIMA &-- Ré-identifié \newline{}-- ré-estimé &-- Inchangé\newline{} Ré-estimé \\
-\cline{2-4}          & Jeu de régresseurs JO &-- Peut être modifié\newline{}-- Ré-estimé &-- Inchangé\newline{}-- Ré-estimé \\
-\cline{2-4}          & Outliers & -- Détection sur toute la série\newline{}-- Ré-estimé &-- Détection sur la dernière année\newline{}-- Ré-estimé \\
-    \hline
-    \multirow{2}{1cm}{X11} & Filtre saisonnier & Peut être modifié & Inchangé (en théorie mais pas en pratique) \\
-\cline{2-4}          & Moyenne mobile de Henderson & Peut être modifié & Inchangé  (en théorie mais pas en pratique) \\
-    \hline
-    \end{tabular}
-\end{table}
-
-Méthode de rafraîchissement recommandée pour les campagnes infra-annuelles : *Partial concurrent adjustment > Last outliers*
-
-
 ### Les essentiels
 
 \footnotesize
@@ -297,6 +299,8 @@ La production des CVS-CJO s'organise en 3 temps :
 
 - campagnes de production mensuelles/trimestrielles  
 
+. . .
+
 Chaque temps comporte des questionnements différents et des choix plus ou moins structurants :  
 
 - Processus : coûts, délais et qualité (adapté aux besoins)  
@@ -304,6 +308,8 @@ Chaque temps comporte des questionnements différents et des choix plus ou moins
 - Modèle : qualité statistique globale  
 
 - Diffusion : qualité des dernières valeurs diffusées  
+
+. . .
 
 La maîtrise des révisions sera faite de manière éclairée (comprendre les causes) et non au détriment de la fiabilité statistique
 

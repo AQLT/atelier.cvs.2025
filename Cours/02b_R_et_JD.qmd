@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE, fig.pos = 'H',message=FALSE,warning = FALSE)
 # Lancer JDemetra+ depuis R
 ### RJDemetra ![](img/rjdemetra_logo.png){height=1.5cm}
 
-RJDemetra est un package qui permet de lancer les routines de JDemetra depuis R
+RJDemetra est un package qui permet de lancer les routines de JDemetra V2 depuis R
 
 {{< fa brands github >}} : https://github.com/rjdverse/rjdemetra
 
@@ -387,6 +387,8 @@ Exemples : https://github.com/palatej/test_rjd3sts
 Exemples : https://github.com/palatej/test_rjd3bench
 
 - [`rjd3revisions`](https://github.com/rjdverse/rjd3revisions) : analyse des révisions
+
+- [`rjd3nowcasting`](https://github.com/rjdverse/rjd3nowcasting) : Dynamic Factor Models (DFM)
 
 - [`ggdemetra3`](https://github.com/AQLT/ggdemetra3) : version 3 de `ggdemetra`
 
