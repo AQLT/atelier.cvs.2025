@@ -23,7 +23,7 @@ replace_existing_file <- TRUE
 nchar_f <- 50
 
 # Dossier où l'on veut exporter les résultats
-dir_exp <- "R-macronia/graphs"
+dir_exp <- "R-macronia/graphs" # A MODIFIER si besoin
 
 # Si le dossier n'existe pas on le crée
 if (!dir.exists(dir_exp))
