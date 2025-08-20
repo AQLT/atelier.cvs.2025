@@ -296,7 +296,7 @@ autoplot(readRDS("img/microbenchmark.RDS")) + theme(text = element_text(size=20)
 
 Objectifs du JWSACruncher : mettre à jour un workspace de JDemetra+ et exporter les résultats à partir de la console (en *batch*), sans devoir ouvrir JDemetra+ : très utile pour la production. Quelques liens :
 
-- pour télécharger le JWSACruncher <https://github.com/jdemetra/jwsacruncher/releases>.
+- pour télécharger le JWSACruncher  : <https://github.com/jdemetra/jwsacruncher/releases> pour la V2 et <https://github.com/jdemetra/jdplus-main/releases> pour la V3 ;
 
 - l'aide associée au JWSACruncher <https://github.com/jdemetra/jwsacruncher/wiki>.
 
