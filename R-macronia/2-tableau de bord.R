@@ -7,8 +7,11 @@ library(rjd3workspace)
 library(rjd3report)
 
 # On charge le workspace
-# Remplacer "R-macronia/macronia_07_2025.xml" par le chemin vers votre workspace
-jws <- jws_open("R-macronia/macronia_07_2025.xml")
+# Remplacer "R-macronia/macronia_08_2025.xml" par le chemin vers votre workspace
+jws <- jws_open(
+  # À MODIFIER SI BESOIN
+  "R-macronia/macronia_08_2025.xml"
+) 
 ctxt <- get_context(jws)
 jws_compute(jws)
 all_jmod <- jread_workspace(jws,compute = TRUE)
@@ -68,6 +71,7 @@ for (sap in names(all_jmod)) {
   qpdf::pdf_combine(input = sprintf("%s/%s/%s.pdf", dir_exp, sap, substr(names(all_jmod[[sap]]), 1, nchar_f)),
                     output = sprintf("%s/%s.pdf", dir_exp, sap))
 }
+# On combine tous les pdfs pour produire un cahier complet
 qpdf::pdf_combine(input = sprintf("%s/%s.pdf", dir_exp, names(all_jmod)),
                   output = sprintf("%s/%s.pdf", dir_exp, "cahier_complet"))
 
