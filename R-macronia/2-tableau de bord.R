@@ -1,4 +1,4 @@
-packages_a_installer <- c("rjd3x13","rjd3workspace", "rjd3report", "ggdemetra3")
+packages_a_installer <- c("rjd3x13","rjd3workspace", "rjd3report", "ggdemetra3", "qpdf")
 packages_a_installer <- packages_a_installer[! packages_a_installer %in% installed.packages()[,"Package"]]
 if (length(packages_a_installer) > 0) {
   install.packages(packages_a_installer, repos = c("https://aqlt.r-universe.dev", "https://cloud.r-project.org"))
