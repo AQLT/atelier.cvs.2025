@@ -5,7 +5,9 @@ if (length(packages_a_installer) > 0) {
 }
 library(rjwsacruncher)
 create_param_file(
-  dir_file_param = "R-macronia", # dossier où le fichier de paramètres sera créé
+  # dossier où le fichier de paramètres sera créé
+  # Attention : modifier si besoin, si ce dossier n'existe pas vous aurez une erreur
+  dir_file_param = "R-macronia", 
   policy = "lastoutliers", # politique de rafraichissement
   csv_layout = "vtable" # format d'export des fichiers CSV
 )
@@ -15,7 +17,7 @@ getOption("cruncher_bin_directory")
 
 # Plutôt que de lancer le cruncher directement sur le workspace on va faire une copie
 library(rjd3workspace)
-jws <- .jws_load("data/macronia.xml")
+jws <- jws_open("data/macronia.xml")
 new_file_workspace <- sprintf(
   "R-macronia/macronia_%s.xml",
   format(Sys.time(), # je récupère la date du jour
@@ -56,8 +58,8 @@ series_sa2 <- read.csv2(
 )
 
 
-# Methode 2 : utiliser rjd3workspace pour la v2
-jws <- .jws_load("TP/wk_CJO_v3.xml")
+# Methode 2 : utiliser rjd3workspace pour la v3
+jws <- jws_open(new_file_workspace)
 all_jmod <- rjd3workspace::.jread_workspace(jws)
 all_jmod <- lapply(all_jmod, function(sap) {
   # On enlève les noms des MP dans les SaItem
