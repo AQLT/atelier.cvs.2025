@@ -12,6 +12,9 @@ jws <- jws_open(
   # À MODIFIER SI BESOIN
   "R-macronia/macronia_08_2025.xml"
 ) 
+# Dossier où l'on veut exporter les résultats
+dir_exp <- "R-macronia/graphs" # A MODIFIER si besoin
+
 ctxt <- get_context(jws)
 jws_compute(jws)
 all_jmod <- jread_workspace(jws,compute = TRUE)
@@ -20,19 +23,17 @@ all_jmod <- lapply(all_jmod, function(sap) {
   names(sap) <- gsub(".*\n", "", names(sap))
   sap
 })
-replace_existing_file <- TRUE
-
-# Nombre maximal de caractères pour le nom des fichiers
-nchar_f <- 50
-
-# Dossier où l'on veut exporter les résultats
-dir_exp <- "R-macronia/graphs" # A MODIFIER si besoin
 
 # Si le dossier n'existe pas on le crée
-if (!dir.exists(dir_exp))
-  dir.create(dir_exp, recursive = TRUE)
+if (!dir.exists(dir_exp)) {
+  dir.create(dir_exp, recursive = TRUE) 
+}
 
 for (sap in names(all_jmod)) {
+  replace_existing_file <- TRUE
+  # Nombre maximal de caractères pour le nom des fichiers
+  nchar_f <- 50
+  
   # Pour chaque saprocessing :
   if (!dir.exists(file.path(dir_exp, sap)))
     dir.create(file.path(dir_exp, sap), recursive = TRUE)
@@ -51,10 +52,11 @@ for (sap in names(all_jmod)) {
     # On définit les dimensions de l'images
     pdf(file, width = 29.7*0.393701/1.5, height = 21*0.393701/1.5)
     # On trace le tableau de bord grâce à rjd3report
-    dashboard <- rjd3report::simple_dashboard2(all_jmod[[sap]][[series]], context = ctxt)
+    dashboard <- tryCatch(rjd3report::simple_dashboard2(all_jmod[[sap]][[series]], context = ctxt),
+                          error = function(e) NULL)
     if(is.null(dashboard)) {
       plot.new()
-      legend("topleft", legend = c(series, "No model"),
+      legend("topleft", legend = c(series, "No model (or error in the model)"),
              bty = "n", text.font =  2, inset = c(0),
              cex = 0.95,
              xpd = TRUE)
