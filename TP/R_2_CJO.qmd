@@ -125,7 +125,7 @@ Deux exemples :
 1. Calendrier associé à la France :
 
 ```{r}
-FR <- national_calendar(list(
+FR <- list(
 	special_day("NEWYEAR"),
 	special_day("EASTERMONDAY"), # Lundi de Pâques
 	special_day("MAYDAY"), # 1er mai
@@ -136,7 +136,7 @@ FR <- national_calendar(list(
 	special_day("ASSUMPTION"), # Assomption
 	special_day("ALLSAINTSDAY"), # Toussaint
 	special_day("ARMISTICE")
-))
+)
 CAL <- national_calendar(FR)
 ```
 
