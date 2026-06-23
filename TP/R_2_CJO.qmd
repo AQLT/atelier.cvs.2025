@@ -587,7 +587,7 @@ gen_calendrier <- function(cal, frequency, start = c(1990, 1), end = c(2030, 1))
 		"leap_year")
 	reg_jo
 }
-regresseurs_JO <- gen_calendrier(FR, frequency = 12)
+regresseurs_JO <- gen_calendrier(CAL, frequency = 12)
 ```
 :::
 
@@ -648,9 +648,9 @@ Une autre façon de faire est d'ajouter le calendrier du personnalisé comme cal
 
 ```{r}
 ctxt <- rjd3toolkit::modelling_context(
-	# on appelle "FR" le calendrier francais
+	# on appelle "FR" le calendrier
   # Remplacer ici par votre calendrier
-	calendars = list(FR = FR), 
+	calendars = list(FR = CAL), 
 	# on crée un groupe de variables "cjo" contenant les régresseurs
 	variables = list(cjo = regresseurs_JO)
 ) 
@@ -681,7 +681,7 @@ Toutefois, on peut se demander, si par parcimonie on peut simplifier le modèle 
 ```{r}
 library(car)
 linearHypothesis(reg2_jd3,
-				 c("monday", "tuesday", "wednesday", "thursday", "friday", "saturday"),
+				 c("mon", "tue", "wed", "thu", "fri", "sat"),
 				 c(0, 0, 0, 0, 0, 0), test = "F")
 ```
 
